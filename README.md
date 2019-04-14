@@ -19,3 +19,5 @@ Ships's data picture in simple chinese:  https://zh.moegirl.org/舰队Collection
 Equipments's data picture in simple chinese:  http://fleet.diablohu.com/  (taked by 眠)(MIT?)
 
 Learning by doing,this proj isn't completed now.
+
+I'll start from ship info,after that I'll provide more api for use.
