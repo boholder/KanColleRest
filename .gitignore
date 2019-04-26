@@ -1,10 +1,11 @@
+node_modules
 .vs
 bin
 mian_pic
 test.js
-node_modules
 *.njsproj
 *.sln
 obj
-*.bat
+dir1.bat
+dir2.bat
 kcrest

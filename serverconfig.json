@@ -1,6 +1,5 @@
 {
-	"mongodb": "mongodb://localhost:27017",
-	"kcdb": "kcrest",
+	"mongodb": "mongodb://KcrestServer:T1OiHnm1HAhM5xLT@localhost:20635/kcrest",
 	"port": 3000,
 	"ip": "127.0.0.1",
 	"domain": "host"

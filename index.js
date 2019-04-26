@@ -20,15 +20,17 @@ var dao = require('./FunctionModule/dao');
 // =======Consts, you'd modify them in serverconfig.json if you need.====
 
 // Mongodb url
+// mongodb://user:passwd@ip:dbport/dbname
 const mongodb = config.mongodb;
-// kancolle database name (or other name, whatever)
-const kcdb = config.kcdb;
+
 // which port to listen, default is 3000.
 const port = config.port;
+
 // server ip,maybe this device have more than one ip?
 // for develop I set it to 127.0.0.1,
 // but you MUST change it to your server's public IP for web service.
 const serverip = config.ip;
+
 // domain
 const domain = config.domain;
 
