@@ -1,0 +1,20 @@
+{
+  "name": "kcrest",
+  "version": "1.0.0",
+  "description": "KanColle Restful data share web app",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --inspect index.js",
+	"dbg": "node --inspect index.js"
+  },
+  "author": "boholder",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.16.4",
+    "mongodb": "^3.2.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.11"
+  }
+}

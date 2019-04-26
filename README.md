@@ -1,6 +1,6 @@
 # KanColleREST
 
-Restful api server using node.js+mongodb+express etc.
+Restful api server mainly using node.js+mongodb+express.
 
 Provide data&info about a webpage game named "Kan Tai Collection".
 
@@ -21,3 +21,5 @@ Equipments's data picture in simple chinese:  http://fleet.diablohu.com/  (taked
 Learning by doing,this proj isn't completed now.
 
 I'll start from ship info,after that I'll provide more api for use.
+
+For more info, see [Wiki](https://github.com/boholder/KanColleREST/wiki).

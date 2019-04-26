@@ -1,0 +1,7 @@
+{
+	"mongodb": "mongodb://localhost:27017",
+	"kcdb": "kcrest",
+	"port": 3000,
+	"ip": "127.0.0.1",
+	"domain": "host"
+}

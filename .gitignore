@@ -1,0 +1,10 @@
+.vs
+bin
+mian_pic
+test.js
+node_modules
+*.njsproj
+*.sln
+obj
+*.bat
+kcrest
