@@ -17,7 +17,7 @@ Changes will be directly reflected in the field's value of the response.
 
 ## Details	详细属性
 
-* `id` 游戏内舰娘ID *ingame script level id*
+* `id` 游戏内舰娘ID&数据集中舰娘ID *ingame script level id & dataset ship ID*
 
 * `no` 游戏内图鉴ID *ingame album card id*	
 

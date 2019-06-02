@@ -6,12 +6,13 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --inspect index.js",
-	"dbg": "node --inspect index.js"
+    "dbg": "node --inspect index.js"
   },
   "author": "boholder",
   "license": "MIT",
   "dependencies": {
     "express": "^4.16.4",
+    "js-levenshtein": "^1.1.6",
     "mongodb": "^3.2.3"
   },
   "devDependencies": {
