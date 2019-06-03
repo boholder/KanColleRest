@@ -3,7 +3,7 @@
  */
 
 // stackoverflow.com/questions/12030248
-// synchronously db query is good.
+// synchronously db query is awesome.
 
 // read server config
 var fs = require('fs');
@@ -18,16 +18,24 @@ const kcdb = config.kcdb;
 var dbo;
 
 var MongoClient = require('mongodb').MongoClient;
+exports.MongoClient = MongoClient;
 
 // start connect and maintain a connection pool(by mongodb module).
-MongoClient.connect(mongodb, { useNewUrlParser: true }, function (err, db) {
-    // no auth, do we really need it?
-    if (err) console.error(err);
-    else dbo = db.db(kcdb);
-    // yeah these connections won't be closed till process end.
-})
+MongoClient.connect(mongodb,
+    { useNewUrlParser: true },
+    function (err, db) {
+        // no auth, do we really need it?
+        if (err) console.error(err);
+        else dbo = db.db(kcdb);
+        // yeah these connections won't be closed till process end.
+    })
 
-// search ship obj via ship name
+/**
+ * search ship obj via ship name
+ * @method getShip
+ * @param {} query
+ * @return CallExpression
+ */
 async function getShip(query) {
     return dbo.collection('ship').
         find(query, { "sort": ['id', 'asc'] }).toArray();
@@ -35,8 +43,12 @@ async function getShip(query) {
 // use this line, we can call this function in other modules
 exports.getShip = getShip;
 
-
-// get suffix name via suffix.id
+/**
+ * get suffix name via suffix.id
+ * @method getSuffix
+ * @param {} query
+ * @return CallExpression
+ */
 async function getSuffix(query) {
     var fields = {
         "ja_jp": true,
@@ -47,9 +59,13 @@ async function getSuffix(query) {
         .findOne(query, { projection: fields });
 }
 exports.getSuffix = getSuffix;
-
-
-// get type name via type.id
+ 
+/**
+ * get type name via type.id
+ * @method getType
+ * @param {} query
+ * @return CallExpression
+ */
 async function getType(query) {
     var fields = {
         "name": true
@@ -59,8 +75,12 @@ async function getType(query) {
 }
 exports.getType = getType;
 
-
-// get class name via class.id
+/**
+ * get class name via class.id
+ * @method getClass
+ * @param {} query
+ * @return CallExpression
+ */
 async function getClass(query) {
     var fields = {
         "name": true
@@ -69,9 +89,13 @@ async function getClass(query) {
         .findOne(query, { projection: fields });
 }
 exports.getClass = getClass;
-
-
-// get equipment name via id
+ 
+/**
+ * get equipment name via id
+ * @method getEquipName
+ * @param {} query
+ * @return CallExpression
+ */
 async function getEquipName(query) {
     var fields = {
         "name": true
@@ -80,15 +104,25 @@ async function getEquipName(query) {
         .findOne(query, { projection: fields });
 }
 exports.getEquipName = getEquipName;
-
-// get all equipment data via id
+ 
+/**
+ * get all equipment data via id
+ * @method getEquip
+ * @param {} query
+ * @return CallExpression
+ */
 async function getEquip(query) {
     return dbo.collection('items')
         .find(query, { "sort": ['id', 'asc'] }).toArray();
 }
 exports.getEquip = getEquip;
-
-// additional_item_types
+ 
+/**
+ * additional_item_types
+ * @method getAddl
+ * @param {} query
+ * @return CallExpression
+ */
 async function getAddl(query) {
     var fields = {
         "name": true
@@ -98,8 +132,12 @@ async function getAddl(query) {
 }
 exports.getAddl = getAddl;
 
-
-// get illustrator&cv name
+/**
+ * get illustrator&cv name
+ * @method getPerson
+ * @param {} query
+ * @return CallExpression
+ */
 async function getPerson(query) {
     var fields = {
         "name": true
@@ -109,7 +147,12 @@ async function getPerson(query) {
 }
 exports.getPerson = getPerson;
 
-// get equip type name via id
+/**
+ * get equip type name via id
+ * @method getEquipType
+ * @param {} query
+ * @return CallExpression
+ */
 async function getEquipType(query) {
     var fields = {
         "name": true
@@ -119,7 +162,12 @@ async function getEquipType(query) {
 }
 exports.getEquipType = getEquipType;
 
-// get ship name via id
+/**
+ * get ship name via id
+ * @method getShipName
+ * @param {} query
+ * @return CallExpression
+ */
 async function getShipName(query) {
     var fields = {
         "name": true
@@ -129,7 +177,12 @@ async function getShipName(query) {
 }
 exports.getShipName = getShipName;
 
-// get consumables via id
+/**
+ * get consumables via id
+ * @method getConsumableName
+ * @param {} query
+ * @return CallExpression
+ */
 async function getConsumableName(query) {
     var fields = {
         "name": true
@@ -139,6 +192,12 @@ async function getConsumableName(query) {
 }
 exports.getConsumableName = getConsumableName;
 
+/**
+ * for ship/cg api, just get part of ship data
+ * @method getShipPartForCG
+ * @param {} query
+ * @return CallExpression
+ */
 async function getShipPartForCG(query) {
     var fields = {
         "name": true,
@@ -155,6 +214,12 @@ async function getShipPartForCG(query) {
 }
 exports.getShipPartForCG = getShipPartForCG;
 
+/**
+ * get extra cg typeid via id, then get type's data
+ * @method getExtraCGType
+ * @param {} query
+ * @return CallExpression
+ */
 async function getExtraCGType(query) {
     var excg = await dbo.collection('exillusts').findOne(query);
     var cgtype = excg.type;
@@ -168,6 +233,12 @@ async function getExtraCGType(query) {
 }
 exports.getExtraCGType = getExtraCGType;
 
+/**
+ * for equip/cg api, just get part of equip data
+ * @method getEquipPartForCG
+ * @param {} query
+ * @return CallExpression
+ */
 async function getEquipPartForCG(query) {
     var fields = {
         "name": true,

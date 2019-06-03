@@ -4,5 +4,6 @@
 	"ip": "127.0.0.1",
 	"domain": "localhost:3000",
 	"image_dir_path": "./all_image",
-	"TLS":0
+  "TLS": 0,
+  "proxy": 0
 }
