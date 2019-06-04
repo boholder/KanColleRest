@@ -123,12 +123,12 @@ async function changeOneEquipObj(equip) {
                 //  but I can change array type to key-value type,
                 await changeImprovementReq(equip, k);
 
+                // improvement.resource, too complex to explain
+                await changeEquipImprovementResource(equip, k);
+
                 // improvement.upgrade: one of equip.upgrade_to elements
                 //   [equip id, improvement level]
                 await changeEquipImprovementUpgrade(equip, k);
-
-                // improvement.resource, too complex to explain
-                await changeEquipImprovementResource(equip, k);
             }
         } catch (err) {
             console.error(err)
@@ -157,117 +157,195 @@ async function changeOneEquipObj(equip) {
 exports.changeOneEquipObj = changeOneEquipObj;
 
 async function changeEquipImprovementResource(equip, k) {
-    // resource[0],[fuel,ammo,steel,bauxite]
-    var fuel = equip.improvement[k].resource[0][0],
-        ammo = equip.improvement[k].resource[0][1],
-        steel = equip.improvement[k].resource[0][2],
-        bauxite = equip.improvement[k].resource[0][3];
-    var basic = { fuel, ammo, steel, bauxite };
+    try {
+        // resource[0],[fuel,ammo,steel,bauxite]
+        var fuel = equip.improvement[k].resource[0][0],
+            ammo = equip.improvement[k].resource[0][1],
+            steel = equip.improvement[k].resource[0][2],
+            bauxite = equip.improvement[k].resource[0][3];
+        var basic = { fuel, ammo, steel, bauxite };
 
-    // resource[1|2|3], [number || array]
-    // [1],[number || array] ?+0 ~ +6
-    // [2],[number || array] ?+6 ~ +max
-    // [3],[number || array] upgrade
-    var request = new Array();
-    for (var j = 1; j < 4; j++) {
-        // development materials
-        var devmalts = equip.improvement[k]
-            .resource[j][0];
-        var devmalts_sure = equip.improvement[k]
-            .resource[j][1];
-        // improvement materials
-        var imprvmalts = equip.improvement[k]
-            .resource[j][2];
-        var imprvmalts_sure = equip.improvement[k]
-            .resource[j][3];
+        // resource[1|2|3], [number || array]
+        // [1],[number || array] ?+0 ~ +6
+        // [2],[number || array] ?+6 ~ +max
+        // [3],[number || array] upgrade
+        var request = await makeImpResourceMaterial(equip, k);
 
-        // consumables
-        if (typeof equip.improvement[k]
-            .resource[j][4] === 'number') {
-            var queryequip = await DbAccess.getEquipName
-                ({ id: equip.improvement[k].resource[j][4] });
-            var ja_jp = queryequip.name.ja_jp,
-                zh_cn = queryequip.name.zh_cn;
-            var name = { ja_jp, zh_cn };
-            var num = 1;
-            var consumables = [{ name, num }];
-        } else if (typeof equip.improvement[k]
-            .resource[j][4] === 'object') {
-            // consume more than one item
-            var consumables = new Array();
-            for (var i = 0; i < equip.improvement[k]
-                .resource[j][4].length; i++) {
+        // make result readable
+        var zero2six = request[0],
+            six2max = request[1],
+            upgrade = request[2];
+        equip.improvement[k].resource = {
+            basic, zero2six,
+            six2max, upgrade
+        };
+    } catch (err) {
+        console.error(err);
+    }
+}
 
-                var cid = equip.improvement[k]
-                    .resource[j][4][i][0];
-                var num = equip.improvement[k]
-                    .resource[j][4][i][1];
-                var name = '';
+async function makeImpResourceMaterial(equip, k) {
+    try {
+        var request = new Array();
+        for (var j = 1; j < 4; j++) {
+            // development materials
+            var devmalts = equip.improvement[k]
+                .resource[j][0];
+            var devmalts_sure = equip.improvement[k]
+                .resource[j][1];
+            // improvement materials
+            var imprvmalts = equip.improvement[k]
+                .resource[j][2];
+            var imprvmalts_sure = equip.improvement[k]
+                .resource[j][3];
 
-                if (!cid || num === 0) {
-                    break;
-                } else if (typeof cid === 'number') {
-                    var queryequip = await DbAccess.
-                        getEquipName({ id: cid });
-                    var ja_jp = queryequip.name.ja_jp,
-                        zh_cn = queryequip.name.zh_cn;
-                    name = { ja_jp, zh_cn };
-                    consumables.push({ name, num });
-                } else if (typeof cid === 'string') {
-                    // 'consumable_' + 'id'
-                    ccid = Number(cid.substr
-                        (cid.indexOf('_') + 1));
-                    var queryconsum = await DbAccess.
-                        getConsumableName({ id: ccid });
-                    var ja_jp = queryconsum.name.ja_jp,
-                        zh_cn = queryconsum.name.zh_cn;
-                    name = { ja_jp, zh_cn };
-                    consumables.push({ name, num });
-                }
+            // consumables
+            if (typeof equip.improvement[k]
+                .resource[j][4] === 'number') {
+                var consumables =
+                    await makeImpResConsumNumber
+                        (equip, k, j);
+            } else if (typeof equip.improvement[k]
+                .resource[j][4] === 'object') {
+                // consume more than one item, it's an array
+                var consumables =
+                    await makeImpResConsumObject
+                        (equip, k, j);
+            }
+
+            request.push({
+                devmalts, devmalts_sure, imprvmalts,
+                imprvmalts_sure, consumables
+            });
+        }
+        return request;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function makeImpResConsumObject(equip, k, j) {
+    try {
+        var consumables = new Array();
+        for (var i = 0; i < equip.improvement[k]
+            .resource[j][4].length; i++) {
+
+            var cid = equip.improvement[k]
+                .resource[j][4][i][0];
+            var num = equip.improvement[k]
+                .resource[j][4][i][1];
+            var name = '';
+
+            if (!cid || num === 0) {
+                break;
+            } else if (typeof cid === 'number') {
+                var queryequip = await DbAccess.
+                    getEquipName({ id: cid });
+                var ja_jp = queryequip.name.ja_jp,
+                    zh_cn = queryequip.name.zh_cn;
+                name = { ja_jp, zh_cn };
+                consumables.push({ name, num });
+            } else if (typeof cid === 'string') {
+                // 'consumable_' + 'id'
+                ccid = Number(cid.substr
+                    (cid.indexOf('_') + 1));
+                var queryconsum = await DbAccess.
+                    getConsumableName({ id: ccid });
+                var ja_jp = queryconsum.name.ja_jp,
+                    zh_cn = queryconsum.name.zh_cn;
+                name = { ja_jp, zh_cn };
+                consumables.push({ name, num });
             }
         }
 
-        request.push({
-            devmalts, devmalts_sure, imprvmalts,
-            imprvmalts_sure, consumables
-        });
-    }
-    // for resource[1|2|3] END
+        if (consumables.length === 0)
+            consumables = undefined;
 
-    // make result readable
-    var zero2six = request[0],
-        six2max = request[1],
-        upgrade = request[2];
-    equip.improvement[k].resource = {
-        basic, zero2six,
-        six2max, upgrade
-    };
+        return consumables;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function makeImpResConsumNumber(equip, k, j) {
+    try {
+        var queryequip =
+            await DbAccess.getEquipName
+                ({ id: equip.improvement[k].resource[j][4] });
+        var ja_jp = queryequip.name.ja_jp,
+            zh_cn = queryequip.name.zh_cn;
+        var name = { ja_jp, zh_cn };
+        var num = 1;
+        var consumables = [{ name, num }];
+        return consumables;
+    } catch (err) {
+        console.error(err);
+    }
 }
 
 async function changeEquipImprovementUpgrade(equip, k) {
-    {
-        var zh_cn, ja_jp;
-        var queryupequip = await
-            DbAccess.getEquipName
-                ({ id: equip.improvement[k].upgrade[0] });
-        if (equip.improvement[k].upgrade[1] === 0) {
-            zh_cn = queryupequip.name.zh_cn;
-            ja_jp = queryupequip.name.ja_jp;
+    try {
+        if (equip.improvement[k].upgrade) {
+            var zh_cn, ja_jp;
+            var queryupequip = await
+                DbAccess.getEquipName
+                    ({ id: equip.improvement[k].upgrade[0] });
+            if (equip.improvement[k].upgrade[1] === 0) {
+                zh_cn = queryupequip.name.zh_cn;
+                ja_jp = queryupequip.name.ja_jp;
+            }
+            else {
+                ja_jp = queryupequip.name.ja_jp
+                    + queryupequip.suffix.ja_jp;
+                zh_cn = queryupequip.name.zh_cn
+                    + queryupequip.suffix.zh_cn;
+            }
+            equip.improvement[k].upgrade = { ja_jp, zh_cn };
+        } else {
+            delete equip.improvement[k].upgrade;
+            delete equip.improvement[k].resource.upgrade;
         }
-        else {
-            ja_jp = queryupequip.name.ja_jp
-                + queryupequip.suffix.ja_jp;
-            zh_cn = queryupequip.name.zh_cn
-                + queryupequip.suffix.zh_cn;
-        }
-        equip.improvement[k].upgrade = { ja_jp, zh_cn };
+    } catch (err) {
+        console.error(err);
     }
-    return { ja_jp, zh_cn };
 }
 
 async function changeImprovementReq(equip, k) {
-    for (var j = 0; j < equip.improvement[k].req.length; j++) {
-        // construct four name array
+    try {
+        for (var j = 0; j < equip.improvement[k].req.length; j++) {
+            var ship = await makeImpReqShipNameArray(equip, k, j);
+
+            var weekprog = equip.improvement[k].req[j][0];
+
+            //// add a readable weekly calendar
+            // different language
+            var en_us = new Array(),
+                ja_jp = new Array(),
+                zh_cn = new Array();
+            var weeken_us = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+                weekja_jp = ['日', '月', '火', '水', '木', '金', '土'],
+                weekzh_cn = ['日', '一', '二', '三', '四', '五', '六'];
+            for (var l = 0; l < 7; l++) {
+                if (weekprog[l] === true) {
+                    en_us.push(weeken_us[l]);
+                    ja_jp.push(weekja_jp[l]);
+                    zh_cn.push(weekzh_cn[l]);
+                }
+            }
+            var weekhuman = { zh_cn, ja_jp, en_us };
+
+            equip.improvement[k].req[j] = { ship, weekprog, weekhuman };
+        }
+        equip.improvement[k].assist_ship =
+            equip.improvement[k].req;
+        delete equip.improvement[k].req;
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function makeImpReqShipNameArray(equip, k, j) {
+    try {
         var ja_jp = new Array();
         var zh_cn = new Array();
         var ja_romaji = new Array();
@@ -305,29 +383,25 @@ async function changeImprovementReq(equip, k) {
                     zh_cn.push(queryship.name.zh_cn);
             }
         }
-        // if there is only one ship can do this
+
         var ship;
         if (ja_jp.length === 1) {
+            // if there is only one ship can do this
             ja_jp = ja_jp[0], ja_kana = ja_kana[0],
                 ja_romaji = ja_romaji[0], zh_cn = zh_cn[0];
             ship = { ja_jp, ja_kana, ja_romaji, zh_cn };
         }
+        else if (ja_jp.length === 0) {
+            // 12.7cm double gun improvement has no ship for assist
+        }
         else {
             ship = { ja_jp, ja_kana, ja_romaji, zh_cn };
         }
-        var weekprog = equip.improvement[k].req[j][0];
-        //// add a readable weekly calendar
-        //var weekhuman = new Array();
-        //// different language
-        //var weeken_us = [Sun, Mon, Tue, Wed, Thu, Fri, Sat];
-        //var for (var l = 0; l < 7; i++) {
-        //    if (weekprog[l] === true)
-        //        weekhuman.push
-        //}
-        // change array to key-value
-        equip.improvement[k].req[j] = { ship, weekprog };
+
+        return ship;
+    } catch (err) {
+        console.error(err);
     }
-    return { zh_cn, ja_jp, j, i };
 }
 
 function makeUpgradeParams2BOne(equip) {
@@ -375,7 +449,6 @@ async function changeEquipUpgradeTo(equip) {
     catch (err) {
         console.error(err);
     }
-    return { ja_jp, zh_cn, i, queryequip };
 }
 
 async function changeEquipUpgradeFor(equip) {
@@ -400,7 +473,6 @@ async function changeEquipUpgradeFor(equip) {
     catch (err) {
         console.error(err);
     }
-    return { ja_jp, zh_cn, i, queryequip };
 }
 
 async function changeEquipUpgradeFrom(equip) {
@@ -425,7 +497,6 @@ async function changeEquipUpgradeFrom(equip) {
     catch (err) {
         console.error(err);
     }
-    return { ja_jp, zh_cn, i, queryequip };
 }
 
 async function changeEquipDefaultEquippedShip(equip) {
@@ -474,7 +545,6 @@ async function changeEquipDefaultEquippedShip(equip) {
     catch (err) {
         console.error(err);
     }
-    return { ja_jp, zh_cn, i, ja_romaji, ja_kana, queryship, suffix };
 }
 
 async function changeEquipType(equip) {
@@ -492,7 +562,6 @@ async function changeEquipType(equip) {
     catch (err) {
         console.error(err);
     }
-    return { ja_jp, zh_cn };
 }
 
 async function changeOneEquipObjCG(equip) {
