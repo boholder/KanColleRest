@@ -196,7 +196,7 @@ function getShipCGImgPath(cgid, eid) {
     } else {
         //extra cg
         var exid = String(cgid).substr(2),
-            prefix = String(cgid).substr(0, 1);
+            prefix = String(cgid).charAt(1);
 
         if (prefix === '0') {
             // no_contour
