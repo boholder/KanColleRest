@@ -187,6 +187,32 @@ function getParamsImg(req) {
     return { paramflag, cgid, eid };
 }
 
+function getShipCGImgPath(cgid, eid) {
+    if (cgid < 10) {
+        // normal cg
+        var imgpath = config.imgdirpath +
+            '/WhoCallsTheFleet-Pics/dist/ships/'
+            + eid + '/' + cgid + '.png';
+    } else {
+        //extra cg
+        var exid = String(cgid).substr(2),
+            prefix = String(cgid).substr(0, 1);
+
+        if (prefix === '0') {
+            // no_contour
+            var imgpath = config.imgdirpath +
+                '/WhoCallsTheFleet-Pics/dist/ships-extra/'
+                + exid + '/' + '8.png';
+        } else if (prefix === '1') {
+            // no_contour_dmged
+            var imgpath = config.imgdirpath +
+                '/WhoCallsTheFleet-Pics/dist/ships-extra/'
+                + exid + '/' + '9.png';
+        }
+    }
+    return imgpath;
+}
+
 function resHead200Json(res, response) {
     res.writeHead(200, {
         'Content-Type': 'application/json;charset=utf-8'
