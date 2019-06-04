@@ -5,7 +5,7 @@
 
 // =============self defined START==============
 // get config consts
-const config = require('./FunctionModule/config')
+const config = require('./FunctionModule/config');
 // ship functions
 var shipfunc = require('./FunctionModule/ShipDataCtrl');
 // equipment functions
@@ -625,6 +625,7 @@ function ImageEquipRoute(req, res) {
     // if leak of paramater
     if (paramflag) {
         res.sendStatus(204);
+        httpcodeFlag = 204;
     }
     else {
         try {
@@ -639,8 +640,13 @@ function ImageEquipRoute(req, res) {
         catch (err) {
             console.error(err);
             res.sendStatus(204);
+            httpcodeFlag = 204;
         }
     }
+    // console.log()
+    var reqParam = decodeURIComponent(req.originalUrl)
+        .substr(decodeURIComponent(req.originalUrl).indexOf('?') + 1);
+    printLog(req.ip, '/v1/image/equip', 'GET', reqParam, httpcodeFlag);
 }
 
 // ==========================req process funcs END==========================

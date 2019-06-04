@@ -27,12 +27,15 @@ const domain = config.domain;
 // kancolle image path,defalut "./"
 const imgdirpath = config.image_dir_path;
 
-//HTTPS or not
+// HTTPS or not
 var protocol = '';
 if (config.TLS == 1)
     protocol = 'https://';
 else
     protocol = 'http://';
+
+// proxy or not
+const proxy = config.proxy;
 
 // =======const end=======
 
@@ -43,3 +46,4 @@ exports.serverip = serverip;
 exports.domain = domain;
 exports.imgdirpath = imgdirpath;
 exports.protocol = protocol;
+exports.proxy = proxy;

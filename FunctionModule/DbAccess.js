@@ -6,14 +6,8 @@
 // synchronously db query is awesome.
 
 // read server config
-var fs = require('fs');
-var file = './serverconfig.json';
-var config = JSON.parse(fs.readFileSync(file));
+const config = require('./config');
 
-// Mongodb url
-const mongodb = config.mongodb;
-// kancolle database name (or other name, whatever)
-const kcdb = config.kcdb;
 // database object
 var dbo;
 
@@ -21,12 +15,12 @@ var MongoClient = require('mongodb').MongoClient;
 exports.MongoClient = MongoClient;
 
 // start connect and maintain a connection pool(by mongodb module).
-MongoClient.connect(mongodb,
+MongoClient.connect(config.mongodb,
     { useNewUrlParser: true },
     function (err, db) {
         // no auth, do we really need it?
         if (err) console.error(err);
-        else dbo = db.db(kcdb);
+        else dbo = db.db(config.kcdb);
         // yeah these connections won't be closed till process end.
     })
 

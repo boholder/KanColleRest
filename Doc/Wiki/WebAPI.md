@@ -35,3 +35,8 @@ URL中的`v1`表示1.0版本，我不敢保证我的设计完美到不需要修�
 * ~~[v1/ship/cg]()~~
 	* Ship's ingame picture (card/regular image/seasonal image etc)
 	* 舰娘的立绘卡片/常规立绘/限定立绘 etc
+	
+* ~~v1/equip/info~~
+* ~~v1/equip/cg~~
+
+Have code & push APIs above, but no time for writing doc temporarily.

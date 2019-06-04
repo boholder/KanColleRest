@@ -7,7 +7,7 @@
 var DbAccess = require('./DbAccess');
 
 // get config consts
-const config = require('./config')
+const config = require('./config');
 
 // ========functions==========
 
@@ -372,7 +372,7 @@ async function changeShipCGExtra(ship, cgURI) {
     catch (err) {
         console.error(err);
     }
-    delete illust_extra;
+    delete ship.illust_extra;
 }
 
 async function changeShipCGIllustrator(ship) {
