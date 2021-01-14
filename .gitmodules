@@ -1,0 +1,6 @@
+[submodule "data/WhoCallsTheFleet-DB"]
+	path = data/WhoCallsTheFleet-DB
+	url = git@github.com:TeamFleet/WhoCallsTheFleet-DB.git
+[submodule "data/image/WhoCallsTheFleet-Pics"]
+	path = data/image/WhoCallsTheFleet-Pics
+	url = git@github.com:TeamFleet/WhoCallsTheFleet-Pics.git

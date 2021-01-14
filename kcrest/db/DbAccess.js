@@ -6,7 +6,7 @@
 // synchronously db query is awesome.
 
 // read server config
-const config = require('./config');
+const config = require('../config/configParser.js');
 
 // database object
 var dbo;

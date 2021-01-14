@@ -4,10 +4,10 @@
  */
 
 // DAO functions
-var DbAccess = require('./DbAccess');
+var DbAccess = require('../db/DbAccess');
 
 // get config consts
-const config = require('./config');
+const config = require('../config/configParser.js');
 
 // ========functions==========
 

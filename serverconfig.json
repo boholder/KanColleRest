@@ -1,9 +1,0 @@
-{
-	"mongodb": "mongodb://localhost:27017/kcrest",
-	"port": 3000,
-	"ip": "127.0.0.1",
-	"domain": "localhost:3000",
-	"image_dir_path": "./all_image",
-  "TLS": 0,
-  "proxy": 0
-}

@@ -1,12 +1,17 @@
+# Tons of data file which can be get through npm or git.
 node_modules
+data/*
+# Visual studio project files
 .vs
 bin
-all_image
 test.js
 *.njsproj
 *.sln
 obj
-dir1.bat
-dir2.bat
-dir3.bat
-kcrest
+# This config file is for Github LFS, 
+# which can upload large file (that mian's picture zip file) to Github.
+.gitattributes
+# Unfinished documents
+doc/unfinished-documents/*
+# mian's pictures zip file
+mian_pic.7z

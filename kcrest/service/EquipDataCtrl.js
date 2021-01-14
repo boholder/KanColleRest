@@ -10,10 +10,10 @@
 const levenshtein = require('js-levenshtein');
 
 // get config consts
-const config = require('./config')
+const config = require('../config/configParser.js')
 
 // DAO functions
-var DbAccess = require('./DbAccess');
+var DbAccess = require('../db/DbAccess');
 
 // equip/info db query json constructor
 // return example: {"name.??": ?? }
