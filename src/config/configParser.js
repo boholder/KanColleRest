@@ -5,7 +5,7 @@
  */
 import { readFileSync } from "fs";
 
-const configFile = "kcrest/config/config.json";
+const configFile = "src/config/config.json";
 var configFromFile;
 
 try {
@@ -23,7 +23,7 @@ const config = {
     env: configFromFile.environment || "prod",
     // Mongodb url
     // example format: mongodb://user:passwd@ip:dbport/dbname
-    mongodb: configFromFile.resource.datasource.mongodb || "mongodb://localhost:27017/kcrest",
+    mongodb: configFromFile.resource.datasource.mongodb || "mongodb://localhost:27017/src",
     // Server ip
     serverIp: configFromFile.server.ip || "127.0.0.1",
     // Which port to listen

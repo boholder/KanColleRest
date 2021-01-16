@@ -1,3 +1,5 @@
+'use strict'
+
 /*
  * Data access functions.(db query)
  */

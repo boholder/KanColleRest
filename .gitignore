@@ -1,17 +1,27 @@
 # Tons of data file which can be get through npm or git.
 node_modules
 data/*
+package-lock.json
+
 # Visual studio project files
 .vs
 bin
-test.js
 *.njsproj
 *.sln
 obj
+
+# JetBrains WebStorm project files
+.idea/*
+
 # This config file is for Github LFS, 
 # which can upload large file (that mian's picture zip file) to Github.
 .gitattributes
+
 # Unfinished documents
 doc/unfinished-documents/*
+
 # mian's pictures zip file
 mian_pic.7z
+
+# framework test script
+src/test.js

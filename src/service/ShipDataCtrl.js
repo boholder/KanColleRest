@@ -1,3 +1,5 @@
+'use strict'
+
 /*
  * This js is called by index.js, and calls DbAccess.js
  * These functions change result that ship/info,ship/cg api response contains.

@@ -2,23 +2,27 @@
   "name": "kcrest",
   "version": "0.0.2",
   "description": "KanColle restful API data sharing server",
-  "main": "index.js",
+  "author": {
+    "name": "boholder",
+    "url": "https://boholder.github.io/en/"
+  },
+  "license": "MIT",
+  "main": "app.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test_model": "node test/model_test.js",
     "dev": "nodemon --inspect index.js",
     "dbg": "node --inspect index.js"
   },
-  "author": "boholder",
-  "license": "MIT",
-  "type": "module",
   "dependencies": {
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.3",
     "helmet": "^4.3.1",
     "js-levenshtein": "^1.1.6",
-    "mongodb": "^3.6.3"
+    "nedb": "^1.8.0"
   },
   "devDependencies": {
+    "jest": "^26.6.3",
     "nodemon": "^2.0.7"
   }
 }

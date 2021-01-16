@@ -48,20 +48,20 @@ app.use(limiter);
 MongoClient.connect(config.mongodb, { useNewUrlParser: true },
     function (err, db) {
         if (err) {
-            console.error('[kcrest start] Mongodb connect failed!'
+            console.error('[src start] Mongodb connect failed!'
                 + '\nBut you can try to launch server first.');
             console.error(err);
         }
         else {
-            console.info('[kcrest start] Mongodb connect success!');
+            console.info('[src start] Mongodb connect success!');
             db.close();
         }
     })
 
 // Start listening port
 app.listen(config.serverPort, config.serverIp, function () {
-    console.info('[kcrest start] Listening on port ' + config.serverPort
-        + '\n[kcrest start] Access it via http://%s:%d',
+    console.info('[src start] Listening on port ' + config.serverPort
+        + '\n[src start] Access it via http://%s:%d',
         config.serverIp, config.serverPort);
 })
 
