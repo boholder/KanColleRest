@@ -12,7 +12,7 @@
 const levenshtein = require('js-levenshtein');
 
 // get config consts
-const config = require('../config/configParser.js')
+const config = require('../config/config-parser.js')
 
 // DAO functions
 var DbAccess = require('../db/DbAccess');

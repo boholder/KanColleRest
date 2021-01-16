@@ -1,7 +1,7 @@
 "use strict";
 
 // Get config consts
-const config = require('./config/configParser.js');
+const config = require('./config/config-parser.js');
 // Ship functions
 var shipfunc = require('./service/ShipDataCtrl');
 // Equipment functions

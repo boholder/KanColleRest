@@ -5,30 +5,21 @@ class Name {
                     ja_jp, zh_cn, ja_kana, ja_romaji, en_us
                 }) {
 
-        this.ja_jp = ja_jp;
+        this.ja_jp = ja_jp || '';
         this.ja_kana = ja_kana || '';
-        this.ja_romaji = ja_romaji || '';
-        this.zh_cn = zh_cn;
-        this.en_us = en_us || '';
-        this.patchJaRomajiAndEnUsValueToEachOther();
-    }
-
-    patchJaRomajiAndEnUsValueToEachOther() {
-        this.en_us = this.en_us === '' ?
-            this.changeStringFirstLetterToUpperCase(this.ja_romaji) : this.en_us;
-        this.ja_romaji = this.ja_romaji === '' ?
-            this.changeStringFirstLetterToLowerCase(this.en_us) : this.ja_romaji;
+        this.zh_cn = zh_cn || '';
+        let romaji = ja_romaji ? this.changeStringFirstLetterToUpperCase(ja_romaji) : '';
+        this.en_us = en_us || romaji;
     }
 
     changeStringFirstLetterToUpperCase(origin) {
         return origin.charAt(0).toUpperCase() + origin.slice(1);
     }
-
-    changeStringFirstLetterToLowerCase(origin) {
-        return origin.charAt(0).toLowerCase() + origin.slice(1);
-    }
 }
 
+/*
+Ship name has special suffix.
+ */
 class ShipName extends Name {
     constructor({
                     ja_jp, ja_kana, ja_romaji, zh_cn,
@@ -40,13 +31,13 @@ class ShipName extends Name {
     }
 
     addNameSuffixToFields(suffix) {
-        this.ja_jp = this.ja_jp + suffix.ja_jp;
-        this.ja_kana = this.ja_kana + suffix.ja_romaji;
-        this.ja_romaji = this.ja_romaji + suffix.ja_romaji;
-        this.zh_cn = this.zh_cn + suffix.zh_cn;
-        this.en_us = this.en_us + ' ' + suffix.ja_romaji;
+        this.ja_jp = this.ja_jp ? this.ja_jp + suffix.ja_jp : '';
+        this.ja_kana = this.ja_kana ? this.ja_kana + suffix.ja_romaji : '';
+        this.zh_cn = this.zh_cn ? this.zh_cn + suffix.zh_cn : '';
+        this.en_us = this.en_us ? this.en_us + ' ' + suffix.ja_romaji : '';
     }
-};
+}
+
 const exampleShipNameJson = {
     "ja_jp": "村雨",
     "ja_kana": "むらさめ",

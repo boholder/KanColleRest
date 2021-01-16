@@ -1,11 +1,13 @@
+import {Name} from "./name.js";
+
 class ItemType {
-    constructor(
-        id, name,
-        equipable_on_type, main_attribute,
-        equipable_extra_ship, id_ingame, tp
-    ) {
+    constructor({
+                    id, name,
+                    equipable_on_type, main_attribute,
+                    equipable_extra_ship, id_ingame, tp
+                }) {
         this.id = id;
-        this.name = name;
+        this.name = new Name(name);
         this.equipable_ship_types = equipable_on_type;
         this.main_attribute = main_attribute;
         this.equipable_ships = equipable_extra_ship;
@@ -34,3 +36,6 @@ const exampleItemTypeJson = {
     "id_ingame": 24,
     "tp": 8
 };
+const mockedItemType = new ItemType(exampleItemTypeJson)
+
+export {ItemType, mockedItemType, exampleItemTypeJson};

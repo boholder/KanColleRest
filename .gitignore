@@ -22,6 +22,3 @@ doc/unfinished-documents/*
 
 # mian's pictures zip file
 mian_pic.7z
-
-# framework test script
-src/test.js

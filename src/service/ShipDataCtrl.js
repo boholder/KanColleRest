@@ -9,7 +9,7 @@
 var DbAccess = require('../db/DbAccess');
 
 // get config consts
-const config = require('../config/configParser.js');
+const config = require('../config/config-parser.js');
 
 // ========functions==========
 
