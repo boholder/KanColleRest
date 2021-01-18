@@ -8,8 +8,7 @@ test('ja_romaji -> en_us value convert', () => {
 });
 
 test('Name leak of value input handle', () => {
-    let name = {}
-    let actual = new Name(name);
+    let actual = new Name();
     expect(actual.en_us).toBe('')
     expect(actual.ja_jp).toBe('')
     expect(actual.ja_kana).toBe('')
@@ -17,8 +16,7 @@ test('Name leak of value input handle', () => {
 });
 
 test('ShipName leak of value input handle', () => {
-    let name = {}
-    let actual = new ShipName(name);
+    let actual = new ShipName();
     expect(actual.en_us).toBe('')
     expect(actual.ja_jp).toBe('')
     expect(actual.ja_kana).toBe('')

@@ -1,29 +1,19 @@
 import {Name} from "./name";
+import {FieldEntityArray} from "./simplified-field-entity";
 
 /*
  database -> ship_types.nedb
  */
 class ShipType {
-    constructor({id, code, code_game, equipable, name, tp}) {
+    constructor({id, code, code_game, equipable, name, tp} = {}) {
         this.id = id;
         this.name = new Name(name);
-        this.code = code;
-        this.code_in_game = code_game;
-        this.equipable_equipment = equipable;
-        this.transport_point = tp;
+        this.code = code || '';
+        this.code_in_game = code_game || '';
+        this.equipable_equipment = equipable || new FieldEntityArray();
+        this.transport_point = tp || 0;
     }
 }
-
-const exampleShipTypeJson = {
-    "id": 1,
-    "code": "DD",
-    "code_game": "駆逐",
-    "_id": "NkAIZy0T53JXtl5i",
-    "equipable": [1, 2, 3, 12, 24, 26, 27, 29, 30, 31, 32, 35, 37, 39, 40, 41, 44, 48],
-    "name": {"en_us": "Destroyer", "ja_jp": "駆逐艦", "zh_cn": "驱逐舰"},
-    "tp": 5
-}
-const mockedShipType = new ShipType(exampleShipTypeJson)
 
 /*
 database -> ship_type_order.nedb
@@ -47,19 +37,11 @@ In Kancolle there are 6 main ship types:
     Destroyer, Cruiser, Submarine, Battleship, Carrier, Others
  */
 class MainShipType {
-    constructor({name, types, id}) {
+    constructor({name, types, id} = {}) {
         this.id = id;
-        this.name = new Name(name)
-        this.subtype = types;
+        this.name = new Name(name);
+        this.subtype = types || new FieldEntityArray();
     }
 }
 
-const exampleMainShipTypeJson = {
-    "name": {"zh_cn": "驱逐舰", "en_us": "Destroyers", "ja_jp": "駆逐艦"},
-    "types": [[1, 19]],
-    "id": 4,
-    "_id": "STrlqZfKVFD8K7Vw"
-}
-const mockedMainShipType = new MainShipType(exampleMainShipTypeJson);
-
-export {ShipType, mockedShipType, MainShipType, mockedMainShipType}
+export {ShipType, MainShipType}

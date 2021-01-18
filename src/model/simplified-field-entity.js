@@ -9,36 +9,23 @@ So we can declare a simplified entity,
     which containing only the id and name (necessary information),
     to replace the complete sub model information.
  */
-import {exampleItemTypeJson} from "./item-type.js";
 import {Name} from "./name";
 
 class SimplifiedFieldEntity {
-    constructor({id, name}) {
+    constructor({id, name} = {}) {
         this.id = id;
         this.name = new Name(name);
     }
 }
 
 /*
-{
-    "id": 38,
-    "name": {
-        "ja_jp": "上陸用舟艇",
-        "zh_cn": "登陆艇",
-        "en_us": "Landing Craft",
-        "ja_kana": ""
-    }
-}
- */
-const mockedSimplifiedFieldEntity = new SimplifiedFieldEntity(exampleItemTypeJson);
-
-/*
 Sometimes main model's sub model field is an array,
     so instead of letting API user take value from each mockedSimplifiedFieldEntity instance,
     we can put these value into different array for convenient.
  */
-class FieldEntityArray {
+class FieldEntityArray extends Array {
     constructor(fieldEntityArray = []) {
+        super();
         this.id = [];
         this.name = {};
         this.name.ja_jp = [];
@@ -56,11 +43,4 @@ class FieldEntityArray {
     }
 }
 
-/*
-FieldEntityArray {
-  id: [ 38 ],
-  name: { ja_jp: [ '上陸用舟艇' ], en_us: [ 'Landing Craft' ], zh_cn: [ '登陆艇' ], ja_kana: [] }
-}
- */
-const mockedFieldEntityArray = new FieldEntityArray([mockedSimplifiedFieldEntity]);
-export {SimplifiedFieldEntity, FieldEntityArray, mockedFieldEntityArray}
+export {SimplifiedFieldEntity, FieldEntityArray}

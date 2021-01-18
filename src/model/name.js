@@ -1,9 +1,7 @@
-'use strict'
-
 class Name {
     constructor({
                     ja_jp, zh_cn, ja_kana, ja_romaji, en_us
-                }) {
+                } = {}) {
 
         this.ja_jp = ja_jp || '';
         this.ja_kana = ja_kana || '';
