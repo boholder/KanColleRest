@@ -3,7 +3,8 @@
 /*
 Classes in this file represent data structures in ships.nedb.
  */
-import {Creator} from "./creator.js";
+import {CreatorModel} from "./creator.model.js";
+import {ShipNameModel} from "./name.model.js";
 
 class ShipState {
     constructor({
@@ -43,31 +44,6 @@ class ShipState {
     }
 }
 
-const exampleShipStateJson = {
-    "fire": 12,
-    "fire_max": 49,
-    "torpedo": 28,
-    "torpedo_max": 79,
-    "aa": 15,
-    "aa_max": 49,
-    "asw": 24,
-    "asw_max": 59,
-    "hp": 30,
-    "hp_max": 48,
-    "armor": 14,
-    "armor_max": 49,
-    "evasion": 45,
-    "evasion_max": 89,
-    "carry": 0,
-    "speed": 10,
-    "range": 1,
-    "los": 7,
-    "los_max": 39,
-    "luck": 12,
-    "luck_max": 59
-};
-const mockedShipState = new ShipState(exampleShipStateJson);
-
 class Modernization {
     // But there are only 4-length arrays in nedb file in fact.
     // Use "modernization":\[\d,\d,\d,\d,\d] regex to check it.
@@ -79,9 +55,6 @@ class Modernization {
         this.luck = luck || NaN;
     }
 }
-
-const exampleModernizationGainArray = [2, 2, 1, 1];
-const mockedModernizationGain = new Modernization(exampleModernizationGainArray);
 
 class Remodel {
     constructor({prev, prev_loop, next, next_lvl, next_loop} = {}, {ammo, steel} = {}) {
@@ -100,36 +73,41 @@ class Remodel {
     }
 }
 
-const exampleRemodelJson = {
-    "prev": 44,
-    "next": 498,
-    "next_lvl": 70
-};
-const exampleRemodelCostJson = {
-    "ammo": 180,
-    "steel": 120
-}
-const mockedRemodel = new Remodel(exampleRemodelJson, exampleRemodelCostJson);
-
 class Creators {
     constructor({cv, illustrator} = {}) {
-        this.cv = new Creator(cv);
-        this.illustrator = new Creator(illustrator);
+        this.cv = new CreatorModel(cv);
+        this.illustrator = new CreatorModel(illustrator);
     }
 
     // TODO 把cv illust id 查DB转成JSON，所有model都这样，负责查询id并构造本model下的属性model
 }
 
-const exampleCreatorsJson = {
-    "cv": 15,
-    "illustrator": 35
-};
-const mockedCreators = new Creators(exampleCreatorsJson);
-
 class Capabilities {
-
+    constructor({
+                    count_as_landing_craft,
+                    count_as_night_operation_aviation_personnel,
+                    participate_night_battle_when_equip_swordfish
+                } = {}) {
+        this.count_as_landing_craft = count_as_landing_craft ? true : false;
+        this.count_as_night_operation_aviation_personnel = count_as_night_operation_aviation_personnel ? true : false;
+        this.participate_night_battle_when_equip_swordfish = participate_night_battle_when_equip_swordfish ? true : false;
+    }
 }
 
-class SeasonalCG {
 
+/*
+It contains one ship girl's information of one model.
+ */
+class ShipModel {
+    // TODO add ship cg & extra cg field
+    // The origin json contains "class" field so I can't construct it in constructor parameter.
+    constructor(ship = {}) {
+        this.id = ship.id;
+        this.no = ship.no;
+        this.name = new ShipNameModel(ship.name);
+        this.state = new ShipState(ship.stat);
+        // TODO unfinished
+    }
 }
+
+export {ShipModel, ShipState, Modernization, Remodel, Creators, Capabilities};

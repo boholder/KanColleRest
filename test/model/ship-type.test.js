@@ -1,6 +1,6 @@
-import {FieldEntityArray} from "../../src/model/simplified-field-entity";
-import {mockedMainShipType, mockedShipType} from "../../src/model/example-model-instances";
-import {MainShipType, ShipType} from "../../src/model/ship-type";
+import {FieldEntityArray} from "../../model/simplified-field-entity.model";
+import {mockedMainShipType, mockedShipType} from "../../model/example-model-instances";
+import {MainShipTypeModel, ShipTypeModel} from "../../model/ship-type.model";
 
 test('mocked ship type object dose not have raw id', () => {
     expect(mockedShipType.equipable_equipment).toBeInstanceOf(FieldEntityArray);
@@ -11,7 +11,7 @@ test('mocked main ship type object dose not have raw id', () => {
 });
 
 test('ship type leak of value input handle', () => {
-    let actual = new ShipType();
+    let actual = new ShipTypeModel();
     expect(actual.code).toBe('');
     expect(actual.code_in_game).toBe('');
     expect(actual.transport_point).toBe(0);
@@ -19,6 +19,6 @@ test('ship type leak of value input handle', () => {
 })
 
 test('main ship type leak of value input handle', () => {
-    let actual = new MainShipType();
+    let actual = new MainShipTypeModel();
     expect(actual.subtype).toBeInstanceOf(FieldEntityArray)
 })

@@ -9,12 +9,12 @@ So we can declare a simplified entity,
     which containing only the id and name (necessary information),
     to replace the complete sub model information.
  */
-import {Name} from "./name";
+import {NameModel} from "./name.model.js";
 
-class SimplifiedFieldEntity {
+class SimplifiedFieldEntityModel {
     constructor({id, name} = {}) {
         this.id = id;
-        this.name = new Name(name);
+        this.name = new NameModel(name);
     }
 }
 
@@ -43,4 +43,4 @@ class FieldEntityArray extends Array {
     }
 }
 
-export {SimplifiedFieldEntity, FieldEntityArray}
+export {SimplifiedFieldEntityModel, FieldEntityArray}

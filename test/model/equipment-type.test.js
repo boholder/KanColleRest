@@ -1,6 +1,6 @@
-import {FieldEntityArray} from "../../src/model/simplified-field-entity";
-import {mockedEquipType} from "../../src/model/example-model-instances";
-import {EquipmentType} from "../../src/model/equipment-type";
+import {FieldEntityArray} from "../../model/simplified-field-entity.model";
+import {mockedEquipType} from "../../model/example-model-instances";
+import {EquipmentTypeModel} from "../../model/equipment-type.model";
 
 test('mocked object dose not have raw id', () => {
     let actual = mockedEquipType;
@@ -9,7 +9,7 @@ test('mocked object dose not have raw id', () => {
 });
 
 test('leak of value input handle', () => {
-    let actual = new EquipmentType();
+    let actual = new EquipmentTypeModel();
     expect(actual.equipable_ship_types).toBeInstanceOf(FieldEntityArray);
     expect(actual.id_in_game).toBe(NaN);
     expect(actual.main_attribute).toBe('');

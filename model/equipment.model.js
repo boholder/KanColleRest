@@ -1,10 +1,10 @@
 // TODO unfinished, just for developing ship API using
-import {Name} from "./name";
+import {NameModel} from "./name.model.js";
 
-class Equipment {
+class EquipmentModel {
     constructor({id, name} = {}) {
         this.id = id;
-        this.name = new Name(name);
+        this.name = new NameModel(name);
     }
 }
 
@@ -208,4 +208,4 @@ const exampleEquipmentJson = {
     "illust_version": 2
 };
 
-export {Equipment};
+export {EquipmentModel};

@@ -1,18 +1,18 @@
 /*
 entities.nedb, ship girls' CV & illustrator information
  */
-import {Name} from "./name.js";
-import {Link} from "./link.js";
+import {NameModel} from "./name.model.js";
+import {LinkModel} from "./link.model.js";
 
-class Creator {
+class CreatorModel {
     constructor({id, name, relation, links} = {}) {
         this.id = id;
-        this.name = new Name(name);
+        this.name = new NameModel(name);
         this.profession = '';
-        let ships_created_id_array = this.setProfessionAndReturnProfessionArray(relation);
+        let relative_ships_id_array = this.setProfessionAndReturnProfessionArray(relation);
         // TODO 需要进DB查ID，可以把DAO融合到这一步，算充血模型。
-        this.ships_created = ships_created_id_array;
-        this.links = Link.buildLinkArray(links);
+        this.relative_ships = relative_ships_id_array;
+        this.links = LinkModel.buildLinkArray(links);
     }
 
     setProfessionAndReturnProfessionArray(relationJson = {}) {
@@ -33,4 +33,4 @@ class Creator {
     }
 }
 
-export {Creator};
+export {CreatorModel};

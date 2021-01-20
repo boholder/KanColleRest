@@ -1,14 +1,14 @@
-import {Name} from "./name.js";
-import {FieldEntityArray} from "./simplified-field-entity";
+import {NameModel} from "./name.model.js";
+import {FieldEntityArray} from "./simplified-field-entity.model.js";
 
-class EquipmentType {
+class EquipmentTypeModel {
     constructor({
                     id, name,
                     equipable_on_type, main_attribute,
                     equipable_extra_ship, id_ingame, tp
                 } = {}) {
         this.id = id;
-        this.name = new Name(name);
+        this.name = new NameModel(name);
         this.equipable_ship_types = equipable_on_type || new FieldEntityArray();
         this.main_attribute = main_attribute || '';
         this.equipable_ships = equipable_extra_ship || new FieldEntityArray();
@@ -17,4 +17,4 @@ class EquipmentType {
     }
 }
 
-export {EquipmentType};
+export {EquipmentTypeModel};

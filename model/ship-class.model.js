@@ -1,10 +1,10 @@
-import {Name} from "./name";
-import {FieldEntityArray} from "./simplified-field-entity";
+import {NameModel} from "./name.model.js";
+import {FieldEntityArray} from "./simplified-field-entity.model.js";
 
-class ShipClass {
+class ShipClassModel {
     constructor({id, name, ship_type_id, speed_rule} = {}) {
         this.id = id;
-        this.name = new Name(name);
+        this.name = new NameModel(name);
         // TODO change type id to type model
         this.type = ship_type_id || new FieldEntityArray();
         // Ship's speed,
@@ -35,4 +35,4 @@ class ShipClass {
     }
 }
 
-export {ShipClass}
+export {ShipClassModel}

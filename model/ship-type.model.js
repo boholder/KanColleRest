@@ -1,13 +1,13 @@
-import {Name} from "./name";
-import {FieldEntityArray} from "./simplified-field-entity";
+import {NameModel} from "./name.model.js";
+import {FieldEntityArray} from "./simplified-field-entity.model.js";
 
 /*
  database -> ship_types.nedb
  */
-class ShipType {
+class ShipTypeModel {
     constructor({id, code, code_game, equipable, name, tp} = {}) {
         this.id = id;
-        this.name = new Name(name);
+        this.name = new NameModel(name);
         this.code = code || '';
         this.code_in_game = code_game || '';
         this.equipable_equipment = equipable || new FieldEntityArray();
@@ -36,12 +36,12 @@ database -> ship_type_collections
 In Kancolle there are 6 main ship types:
     Destroyer, Cruiser, Submarine, Battleship, Carrier, Others
  */
-class MainShipType {
+class MainShipTypeModel {
     constructor({name, types, id} = {}) {
         this.id = id;
-        this.name = new Name(name);
+        this.name = new NameModel(name);
         this.subtype = types || new FieldEntityArray();
     }
 }
 
-export {ShipType, MainShipType}
+export {ShipTypeModel, MainShipTypeModel}

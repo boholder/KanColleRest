@@ -3,7 +3,7 @@
 /*
 Both ship & equipment have dismantle operation.
  */
-class DismantlingGain {
+class DismantlingGainModel {
     constructor([fuel, ammo, steel, bauxite] = []) {
         this.fuel = fuel || NaN;
         this.ammo = ammo || NaN;
@@ -12,4 +12,4 @@ class DismantlingGain {
     }
 }
 
-export {DismantlingGain};
+export {DismantlingGainModel};

@@ -12,15 +12,19 @@
   "scripts": {
     "test": "jest ./test",
     "test_model": "jest ./test/model",
-    "dev": "nodemon --inspect index.js",
-    "dbg": "node --inspect index.js"
+    "dev": "nodemon --inspect app.js",
+    "dbg": "node --inspect app.js"
   },
   "dependencies": {
+    "config": "^3.3.3",
     "express": "^4.17.1",
     "express-rate-limit": "^5.2.3",
+    "express-winston": "^4.0.5",
     "helmet": "^4.3.1",
     "js-levenshtein": "^1.1.6",
-    "nedb": "^1.8.0"
+    "nedb": "^1.8.0",
+    "nedb-promises": "^4.1.1",
+    "winston": "^3.3.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",

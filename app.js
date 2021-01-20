@@ -1,10 +1,12 @@
 "use strict";
 
 // Get config consts
+import {expressWinstonLogger} from "./config/winston-logger.js";
+
 const config = require('./config/config-parser.js');
 // Ship functions
 var shipfunc = require('./service/ShipDataCtrl');
-// Equipment functions
+// EquipmentModel functions
 var equipfunc = require('./service/EquipDataCtrl');
 // DAO functions
 var DbAccess = require('./db/DbAccess');
@@ -17,7 +19,7 @@ const app = express();
 // ====Configurating express application:
 
 // For forcing re-send response rather than 304(Not Modified) when developing
-if ("dev" === config.env) {
+if (process.env.NODE_ENV !== 'production') {
     app.disable('etag');
 }
 
@@ -34,25 +36,27 @@ app.use(helmet());
 
 // Use express-rate-limit to limit query rate.
 const rateLimit = require("express-rate-limit");
-const { printLog } = require("./util/log");
+const {printLog} = require("./util/log");
 const limiter = rateLimit({
-    windowMs: 30 * 1000, // 30 seconds
-    max: 100, // limit each IP to 100 requests per windowMs
-    headers: false // do not send headers about this module
+    windowMs: config.expressRateLimit.windowTime, // 30 seconds
+    max: config.expressRateLimit.queryLimit, // limit each IP to 100 requests per windowMs
+    headers: false // do not send headers about express module (helmet module will also delete headers)
 });
 app.use(limiter);
+
+// Use express-winston logger module
+app.use(expressWinstonLogger);
 
 // ====Starting server:
 
 // Try to connect to mongodb
-MongoClient.connect(config.mongodb, { useNewUrlParser: true },
+MongoClient.connect(config.mongodb, {useNewUrlParser: true},
     function (err, db) {
         if (err) {
             console.error('[src start] Mongodb connect failed!'
                 + '\nBut you can try to launch server first.');
             console.error(err);
-        }
-        else {
+        } else {
             console.info('[src start] Mongodb connect success!');
             db.close();
         }

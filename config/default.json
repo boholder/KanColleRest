@@ -1,0 +1,33 @@
+{
+  "server": {
+    "port": 3000,
+    "ip": "127.0.0.1",
+    "domain": "localhost:3000",
+    "use_TLS": false,
+    "use_proxy": false
+  },
+  "express_rate_limit": {
+    "window_in_milliseconds": 30000,
+    "max_query_number_per_ip_per_window": 100
+  },
+  "resource": {
+    "datasource": {
+      "nedb_database_file_dir": "E:\\code\\javascript\\KanColleREST\\data\\WhoCallsTheFleet-DB\\db",
+      "nedb_file_names": {
+        "ship": "ships",
+        "ship_name_suffix": "ship_namesuffix",
+        "ship_class": "ship_classes",
+        "ship_type": "ship_types",
+        "main_ship_type": "ship_type_collections",
+        "creator": "entities",
+        "consumable": "consumables",
+        "seasonal_cg": "exillusts",
+        "seasonal_cg_type": "exillust_types",
+        "main_equipment_type": "item_type_collections",
+        "equipment_type": "item_types",
+        "equipment": "items"
+      }
+    },
+    "image_dir": "E:\\code\\javascript\\KanColleREST\\data\\image"
+  }
+}
