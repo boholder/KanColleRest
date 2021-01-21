@@ -1,5 +1,5 @@
 import {logger} from "../../config/winston-logger.js";
-import {buildDbCreationOptionWith, Datastore, DB_FILE_NAME} from "../database-util.js";
+import {buildDbCreationOptionWith, Datastore, DB_FILE_NAME, getOneById} from "../database-util.js";
 import {DatabaseQueryExecuteError, DatabaseQueryFormatError} from "../../util/error.js";
 
 const shipNameSuffixDb = Datastore.create(
@@ -7,16 +7,7 @@ const shipNameSuffixDb = Datastore.create(
 );
 
 async function getShipNameSuffixBy(id) {
-    if (!id) {
-        logger.warn(new DatabaseQueryFormatError(id));
-        return {};
-    }
-    let result = await shipNameSuffixDb.findOne({id: id}).catch(
-        reason => {
-            logger.error(new DatabaseQueryExecuteError('shipNameSuffixDb', reason));
-        }
-    );
-    return result || {};
+    return getOneById(shipNameSuffixDb, id, {_id: 0});
 }
 
 export {getShipNameSuffixBy};

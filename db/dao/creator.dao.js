@@ -1,22 +1,9 @@
-import {buildDbCreationOptionWith, Datastore, DB_FILE_NAME} from "../database-util.js";
-import {logger} from "../../config/winston-logger.js";
-import {DatabaseQueryExecuteError, DatabaseQueryFormatError} from "../../util/error.js";
-import {CreatorModel} from "../../model/creator.model";
+import {buildDbCreationOptionWith, Datastore, DB_FILE_NAME, getOneById} from "../database-util.js";
 
 const creatorDb = Datastore.create(buildDbCreationOptionWith(DB_FILE_NAME.creator));
 
 async function getCreatorBy(id) {
-    if (!id) {
-        logger.warn(new DatabaseQueryFormatError(id));
-        return {};
-    }
-    let result = new CreatorModel(await creatorDb.findOne(
-        {id: id}, {picture: 0}).catch(
-        reason => {
-            logger.error(new DatabaseQueryExecuteError('creatorDb', reason));
-        }
-    ));
-    return result || {};
+    return getOneById(creatorDb, id, {picture: 0, _id: 0});
 }
 
 export {getCreatorBy}

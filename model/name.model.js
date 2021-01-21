@@ -1,5 +1,9 @@
 import {getShipNameSuffixBy} from "../db/dao/ship-name-suffix.dao.js";
 
+/*
+This model is present for name field of ship girl, equipment...
+    while name field is always recorded in multi-language.
+ */
 class NameModel {
     constructor({
                     ja_jp, zh_cn, ja_kana, ja_romaji, en_us
@@ -8,7 +12,14 @@ class NameModel {
         this.ja_jp = ja_jp || '';
         this.ja_kana = ja_kana || '';
         this.zh_cn = zh_cn || '';
-        let romaji = ja_romaji ? this.changeStringFirstLetterToUpperCase(ja_romaji) : '';
+        // Specially, ship girl "U-511"
+        // (name is constructed by english letter, while name.en_us not exists in ships.nedb)
+        //      doesn't have both ja_romaji & en_us name.
+        // So melt down en_us name of girls like her to take ja_jp name is a trick since they have
+        //      ja_jp name and that value IS english.
+        // Example: U-511: name.ja_jp: 'U-511', name.en_us: undefined, name.ja_romaji: 'U-511'
+        let romaji = ja_romaji ? ja_romaji : this.ja_jp;
+        romaji = this.changeStringFirstLetterToUpperCase(romaji);
         this.en_us = en_us || romaji;
     }
 
@@ -27,17 +38,17 @@ class ShipNameModel extends NameModel {
                 } = {}) {
 
         super({ja_jp, ja_kana, ja_romaji, zh_cn, en_us});
-        this.addNameSuffixToFields(suffix);
+        this.#addNameSuffixToFields(suffix);
     }
 
-    addNameSuffixToFields(suffix = {}) {
-        this.ja_jp = this.appendSuffixDependsOn(this.ja_jp, suffix.ja_jp);
-        this.ja_kana = this.appendSuffixDependsOn(this.ja_kana, suffix.ja_jp);
-        this.zh_cn = this.appendSuffixDependsOn(this.zh_cn, suffix.zh_cn);
-        this.en_us = this.appendSuffixDependsOn(this.en_us, suffix.ja_romaji);
+    #addNameSuffixToFields(suffix = {}) {
+        this.ja_jp = this.#appendSuffixDependsOn(this.ja_jp, suffix.ja_jp);
+        this.ja_kana = this.#appendSuffixDependsOn(this.ja_kana, suffix.ja_jp);
+        this.zh_cn = this.#appendSuffixDependsOn(this.zh_cn, suffix.zh_cn);
+        this.en_us = this.#appendSuffixDependsOn(this.en_us, suffix.ja_romaji);
     }
 
-    appendSuffixDependsOn(field, suffix) {
+    #appendSuffixDependsOn(field, suffix) {
         if (field) {
             if (suffix) {
                 return field + suffix;

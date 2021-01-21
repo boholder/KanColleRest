@@ -41,6 +41,10 @@ class FieldEntityArray extends Array {
             this.name.ja_kana.push(entityName.ja_kana);
         }
     }
+
+    static buildFieldEntityArray(fieldEntityArray) {
+        return new FieldEntityArray(fieldEntityArray);
+    }
 }
 
 export {SimplifiedFieldEntityModel, FieldEntityArray}

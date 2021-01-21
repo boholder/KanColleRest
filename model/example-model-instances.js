@@ -59,7 +59,7 @@ const exampleCreatorJson = {
         ]
     }
 };
-const mockedCreator = new CreatorModel(exampleCreatorJson);
+const mockedCreator = CreatorModel.build(exampleCreatorJson);
 export {mockedCreator};
 
 const exampleEquipTypeJson = {

@@ -6,7 +6,7 @@ test('handle db query encounter error', () => {
     })
 });
 
-test.skip('query db and print one instance', () => {
+test('query db and print one instance', () => {
     return getShipBy(1).then(value => {
         console.log(value);
     });
