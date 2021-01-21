@@ -44,7 +44,7 @@ class CreatorModel {
         let entityArray = [];
         for (let subArray of shipIdArray) {
             // only need one id since their name is same (only suffix is diff).
-            let entity = new SimplifiedFieldEntityModel(await getShipIdNameBy(subArray[0]));
+            let entity = await getShipIdNameBy(subArray[0]);
             entityArray.push(entity);
         }
         return FieldEntityArray.buildFieldEntityArray(entityArray);

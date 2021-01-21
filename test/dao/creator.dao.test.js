@@ -6,8 +6,7 @@ test('handle db query encounter error', () => {
     })
 });
 
-// TODO get simple ship name & id
-test('query db and print one instance', () => {
+test.skip('query db and print one model', () => {
     return getCreatorBy(1).then(value => {
         console.log(value);
     });
