@@ -1,7 +1,7 @@
 # Tons of data file which can be get through npm or git.
 node_modules
-data/*
 package-lock.json
+data/*
 
 # Visual studio project files
 .vs
