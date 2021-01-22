@@ -1,4 +1,5 @@
-import {NameModel, ShipNameModel} from '../../model/name.model.js';
+import {NameModel} from '../../model/name.model.js';
+import {ShipNameModel} from "../../model/ship/ship-name.model";
 
 test('Name ja_jp -> ja_romaji -> en_us value convert', () => {
     let name = {

@@ -1,15 +1,21 @@
-import {DismantlingGainModel} from "./dismantling-gain.model.js";
+import {DismantlementGainModel} from "./dismantlement-gain.model.js";
 import {CreatorModel} from "./creator.model.js";
 import {EquipmentTypeModel} from "./equipment-type.model.js";
 import {LinkModel} from "./link.model.js";
-import {MainShipTypeModel, ShipTypeModel} from "./ship-type.model.js";
+import {ShipTypeModel} from "./ship/ship-type.model.js";
 import {FieldEntityArray, SimplifiedFieldEntityModel} from "./simplified-field-entity.model.js";
-import {ShipClassModel} from "./ship-class.model.js";
-import {Capabilities, Creators, Modernization, Remodel, ShipModel, ShipState} from "./ship.model.js";
-import {ShipNameModel} from "./name.model.js";
+import {ShipClassModel} from "./ship/ship-class.model.js";
+import {ShipModel} from "./ship.model.js";
+import {ShipStateModel} from "./ship/ship-state.model";
+import {ModernizationModel} from "./ship/ship-modernization.model";
+import {RemodelModel} from "./ship/ship-remodel.model";
+import {CreatorsModel} from "./ship/ship-creators.model";
+import {CapabilitiesModel} from "./ship/ship-capabilities.model";
+import {ShipNameModel} from "./ship/ship-name.model";
+import {MainShipTypeModel} from "./ship/main-ship-type.model";
 
 const exampleDismantlingGainArray = [1, 2, 10, 0];
-const mockedDismantlingGain = new DismantlingGainModel(exampleDismantlingGainArray);
+const mockedDismantlingGain = new DismantlementGainModel(exampleDismantlingGainArray);
 export {mockedDismantlingGain};
 
 const exampleCreatorJson = {
@@ -100,7 +106,7 @@ const exampleShipTypeJson = {
     "name": {"en_us": "Destroyer", "ja_jp": "駆逐艦", "zh_cn": "驱逐舰"},
     "tp": 5
 }
-const mockedShipType = new ShipTypeModel(exampleShipTypeJson)
+const mockedShipType = ShipTypeModel.build(exampleShipTypeJson);
 const exampleMainShipTypeJson = {
     "name": {"zh_cn": "驱逐舰", "en_us": "Destroyers", "ja_jp": "駆逐艦"},
     "types": [[1, 19]],
@@ -148,10 +154,10 @@ const exampleShipStateJson = {
     "luck": 12,
     "luck_max": 59
 };
-const mockedShipState = new ShipState(exampleShipStateJson);
+const mockedShipState = new ShipStateModel(exampleShipStateJson);
 
 const exampleModernizationGainArray = [2, 2, 1, 1];
-const mockedModernizationGain = new Modernization(exampleModernizationGainArray);
+const mockedModernizationGain = new ModernizationModel(exampleModernizationGainArray);
 
 const exampleRemodelJson = {
     "prev": 44,
@@ -162,16 +168,16 @@ const exampleRemodelCostJson = {
     "ammo": 180,
     "steel": 120
 }
-const mockedRemodel = new Remodel(exampleRemodelJson, exampleRemodelCostJson);
+const mockedRemodel = new RemodelModel(exampleRemodelJson, exampleRemodelCostJson);
 
 const exampleCreatorsJson = {
     "cv": 15,
     "illustrator": 35
 };
-const mockedCreators = new Creators(exampleCreatorsJson);
+const mockedCreators = new CreatorsModel(exampleCreatorsJson);
 
 const exampleCapabilitiesJson = {"count_as_night_operation_aviation_personnel": 1};
-const mockedCapabilities = new Capabilities(exampleCreatorsJson);
+const mockedCapabilities = new CapabilitiesModel(exampleCreatorsJson);
 
 const exampleShipModelJson = {
     "id": 244,

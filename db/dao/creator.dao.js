@@ -1,10 +1,13 @@
-import {buildDbCreationOptionWith, Datastore, DB_FILE_NAME, getOneById} from "../database-util.js";
+import {BaseDao, Datastore, DB_FILE_NAME} from "./base.dao.js";
 import {CreatorModel} from "../../model/creator.model.js";
 
-const creatorDb = Datastore.create(buildDbCreationOptionWith(DB_FILE_NAME.creator));
+class CreatorDao extends BaseDao {
+    static #creatorDb = Datastore.create(super.buildDbCreationOptionWith(DB_FILE_NAME.creator));
 
-async function getCreatorBy(id) {
-    return CreatorModel.build(await getOneById(creatorDb, id, {picture: 0, _id: 0}));
+    static async getCreatorBy(id) {
+        return CreatorModel.build(await super.getOneById(this.#creatorDb, id, {picture: 0, _id: 0}));
+    }
 }
 
-export {getCreatorBy}
+
+export {CreatorDao}

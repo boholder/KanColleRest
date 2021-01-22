@@ -1,4 +1,3 @@
-import {shipDb} from "./db/dao/ship.dao.js";
-import {ShipNameModel} from "./model/name.model.js";
+import config from "config";
 
-console.log(ShipNameModel.build());
+console.log(config);

@@ -1,19 +1,19 @@
-import {getShipBy, getShipIdNameBy} from "../../db/dao/ship.dao.js";
+import {getEquipmentBy, getEquipmentIdNameBy} from "../../db/dao/equipment.dao.js";
 
 test('handle db query encounter error', () => {
-    return getShipBy(-1).then(value => {
+    return getEquipmentBy(-1).then(value => {
         expect(value).toBeTruthy();
     })
 });
 
 test('query db and print one instance', () => {
-    return getShipBy(1).then(value => {
+    return getEquipmentBy(1).then(value => {
         console.log(value);
     });
 });
 
 test('query db and print one id-name instance', () => {
-    return getShipIdNameBy(1).then(value => {
+    return getEquipmentIdNameBy(1).then(value => {
         console.log(value);
     });
 });

@@ -1,13 +1,13 @@
-import {getCreatorBy} from "../../db/dao/creator.dao.js";
+import {getShipTypeBy} from "../../db/dao/ship-type.dao.js";
 
 test('handle db query encounter error', () => {
-    return getCreatorBy(-1).then(value => {
+    return getShipTypeBy(-1).then(value => {
         expect(value).toBeTruthy();
     })
 });
 
 test.skip('query db and print one model', () => {
-    return getCreatorBy(1).then(value => {
+    return getShipTypeBy(1).then(value => {
         console.log(value);
     });
 });

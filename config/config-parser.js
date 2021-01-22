@@ -1,9 +1,10 @@
 "use strict";
 import config from 'config';
-/*
- * Read configurations from default.json file, provide config constants to other functions.
- * Modify them in default.json if you need.
- */
+
+// First I manually get config from json file, now I use node-config module
+// https://github.com/lorenwest/node-config
+// Leaving this file there only for comments explain each field,
+//      once document is done, I should remove it.
 
 // works when config is called in other file, but not works on this file
 let server = config.get('server') || {};
@@ -42,5 +43,3 @@ const CONFIG = {
         queryLimit: expressRateLimit.max_query_number_per_ip_per_window || 100
     }
 }
-
-export {CONFIG};

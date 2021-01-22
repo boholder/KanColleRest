@@ -25,9 +25,45 @@
         "seasonal_cg_type": "exillust_types",
         "main_equipment_type": "item_type_collections",
         "equipment_type": "item_types",
-        "equipment": "items"
+        "equipment": "items",
+        "ship_series": "ship_series"
       }
     },
-    "image_dir": "E:\\code\\javascript\\KanColleREST\\data\\image"
+    "image": {
+      "wctf_image_dir": "E:\\code\\javascript\\KanColleREST\\data\\image\\WhoCallsTheFleet-Pics\\dist",
+      "mian_image_dir": "E:\\code\\javascript\\KanColleREST\\data\\image\\mian_pics"
+    }
+  },
+  "api": {
+    "current": "v1",
+    "v1": {
+      "root": {
+      },
+      "ship": {
+        "route": "ship",
+        "param": {
+          "ship": "ship",
+          "match_format": "matchfmt",
+          "match_format_value": [
+            "ja_kana",
+            "ja_jp",
+            "en_us",
+            "zh_cn"
+          ],
+          "response_format": "resfmt",
+          "response_format_value": [
+            "json",
+            "img"
+          ]
+        }
+      },
+      "ship_cg": {
+        "route": "ship-cg",
+        "param": {
+          "ship_id": "shipid",
+          "cg_id": "cgid"
+        }
+      }
+    }
   }
 }

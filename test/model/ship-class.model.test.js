@@ -1,4 +1,4 @@
-import {ShipClassModel} from "../../model/ship-class.model";
+import {ShipClassModel} from "../../model/ship/ship-class.model";
 import {FieldEntityArray} from "../../model/simplified-field-entity.model";
 import {mockedShipClass} from "../../model/example-model-instances";
 

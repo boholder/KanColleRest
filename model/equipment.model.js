@@ -6,6 +6,10 @@ class EquipmentModel {
         this.id = id;
         this.name = new NameModel(name);
     }
+
+    static build(equip={}){
+        return new EquipmentModel(equip);
+    }
 }
 
 const exampleEquipmentJson = {

@@ -3,8 +3,8 @@ entities.nedb, ship girls' CV & illustrator information
  */
 import {NameModel} from "./name.model.js";
 import {LinkModel} from "./link.model.js";
-import {getShipIdNameBy} from "../db/dao/ship.dao.js";
-import {FieldEntityArray, SimplifiedFieldEntityModel} from "./simplified-field-entity.model.js";
+import {ShipDao} from "../db/dao/ship.dao.js";
+import {FieldEntityArray} from "./simplified-field-entity.model.js";
 
 class CreatorModel {
     constructor({id, name, relation, links, profession} = {}) {
@@ -41,13 +41,12 @@ class CreatorModel {
     }
 
     static async #getShipIdNameFromDbBy(shipIdArray) {
-        let entityArray = [];
+        let idArray = [];
         for (let subArray of shipIdArray) {
-            // only need one id since their name is same (only suffix is diff).
-            let entity = await getShipIdNameBy(subArray[0]);
-            entityArray.push(entity);
+            // only need one id since their name is same (only suffix is diff)
+            idArray.push(subArray[0]);
         }
-        return FieldEntityArray.buildFieldEntityArray(entityArray);
+        return FieldEntityArray.buildModelFromIdArray(idArray,ShipDao.getShipIdNameBy);
     }
 }
 

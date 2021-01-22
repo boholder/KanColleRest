@@ -1,5 +1,6 @@
-import {NameModel} from "./name.model.js";
-import {FieldEntityArray} from "./simplified-field-entity.model.js";
+import {NameModel} from "../name.model.js";
+import {FieldEntityArray} from "../simplified-field-entity.model.js";
+import {EquipmentDao} from "../../db/dao/equipment.dao.js";
 
 /*
  database -> ship_types.nedb
@@ -10,8 +11,17 @@ class ShipTypeModel {
         this.name = new NameModel(name);
         this.code = code || '';
         this.code_in_game = code_game || '';
-        this.equipable_equipment = equipable || new FieldEntityArray();
+        this.equipable_equipments = equipable || new FieldEntityArray();
         this.transport_point = tp || 0;
+    }
+
+    static async build(shipType = {}) {
+        shipType.equipable = await this.getEquipIdNameFromDbBy(shipType.equipable);
+        return new ShipTypeModel(shipType);
+    }
+
+    static async getEquipIdNameFromDbBy(equipIdArray = []) {
+        return FieldEntityArray.buildModelFromIdArray(equipIdArray, EquipmentDao.getEquipmentIdNameBy);
     }
 }
 
@@ -31,17 +41,4 @@ example:
         "name":{"en_us":"Heavy Cruiser","ja_jp":"重巡洋艦","zh_cn":"重巡洋舰"}}
  */
 
-/*
-database -> ship_type_collections
-In Kancolle there are 6 main ship types:
-    Destroyer, Cruiser, Submarine, Battleship, Carrier, Others
- */
-class MainShipTypeModel {
-    constructor({name, types, id} = {}) {
-        this.id = id;
-        this.name = new NameModel(name);
-        this.subtype = types || new FieldEntityArray();
-    }
-}
-
-export {ShipTypeModel, MainShipTypeModel}
+export {ShipTypeModel}

@@ -1,5 +1,3 @@
-import {getShipNameSuffixBy} from "../db/dao/ship-name-suffix.dao.js";
-
 /*
 This model is present for name field of ship girl, equipment...
     while name field is always recorded in multi-language.
@@ -26,47 +24,10 @@ class NameModel {
     changeStringFirstLetterToUpperCase(origin) {
         return origin.charAt(0).toUpperCase() + origin.slice(1);
     }
+
+    static build(name = {}) {
+        return new NameModel(name);
+    }
 }
 
-/*
-Ship name has special suffix.
- */
-class ShipNameModel extends NameModel {
-    constructor({
-                    ja_jp, ja_kana, ja_romaji, zh_cn,
-                    en_us, suffix
-                } = {}) {
-
-        super({ja_jp, ja_kana, ja_romaji, zh_cn, en_us});
-        this.#addNameSuffixToFields(suffix);
-    }
-
-    #addNameSuffixToFields(suffix = {}) {
-        this.ja_jp = this.#appendSuffixDependsOn(this.ja_jp, suffix.ja_jp);
-        this.ja_kana = this.#appendSuffixDependsOn(this.ja_kana, suffix.ja_jp);
-        this.zh_cn = this.#appendSuffixDependsOn(this.zh_cn, suffix.zh_cn);
-        this.en_us = this.#appendSuffixDependsOn(this.en_us, suffix.ja_romaji);
-    }
-
-    #appendSuffixDependsOn(field, suffix) {
-        if (field) {
-            if (suffix) {
-                return field + suffix;
-            } else {
-                this.name_is_ok_but_suffix_got_error = true;
-                return field;
-            }
-        } else {
-            return '';
-        }
-    }
-
-    static async build(shipName = {}) {
-        let promise = await getShipNameSuffixBy(shipName.suffix);
-        shipName.suffix = promise;
-        return new ShipNameModel(shipName);
-    }
-
-}
-
-export {NameModel, ShipNameModel};
+export {NameModel};

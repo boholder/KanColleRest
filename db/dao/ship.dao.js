@@ -1,16 +1,19 @@
-import {buildDbCreationOptionWith, Datastore, DB_FILE_NAME, getOneById} from "../database-util.js";
-import {SimplifiedFieldEntityModel} from "../../model/simplified-field-entity.model";
+import {BaseDao, Datastore, DB_FILE_NAME} from "./base.dao.js";
+import {SimplifiedFieldEntityModel} from "../../model/simplified-field-entity.model.js";
+import {ShipModel} from "../../model/ship.model.js";
 
-const shipDb = Datastore.create(
-    buildDbCreationOptionWith(DB_FILE_NAME.ship)
-);
+class ShipDao extends BaseDao {
+    static #shipDb = Datastore.create(
+        super.buildDbCreationOptionWith(DB_FILE_NAME.ship)
+    );
 
-async function getShipBy(id) {
-    return getOneById(shipDb, id);
+    static async getShipBy(id) {
+        return ShipModel.build(await super.getOneById(this.#shipDb, id, {_id: 0}));
+    }
+
+    static async getShipIdNameBy(id) {
+        return new SimplifiedFieldEntityModel(await super.getOneById(this.#shipDb, id, {name: 1, id: 1}));
+    }
 }
 
-async function getShipIdNameBy(id) {
-    return new SimplifiedFieldEntityModel(await getOneById(shipDb, id, {name: 1, id: 1}));
-}
-
-export {shipDb, getShipBy, getShipIdNameBy};
+export {ShipDao};

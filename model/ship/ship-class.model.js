@@ -1,11 +1,12 @@
-import {NameModel} from "./name.model.js";
-import {FieldEntityArray} from "./simplified-field-entity.model.js";
+import {NameModel} from "../name.model.js";
+import {FieldEntityArray} from "../simplified-field-entity.model.js";
+import {ShipTypeDao} from "../../db/dao/ship-type.dao.js";
+import {ShipTypeModel} from "./ship-type.model.js";
 
 class ShipClassModel {
     constructor({id, name, ship_type_id, speed_rule} = {}) {
         this.id = id;
         this.name = new NameModel(name);
-        // TODO change type id to type model
         this.type = ship_type_id || new FieldEntityArray();
         // Ship's speed,
         // which will affect fleet route on the map.
@@ -22,16 +23,21 @@ class ShipClassModel {
         this.speed_rule = speed_rule || '';
         this.speed_type = '';
         this.speed_rank = NaN;
-        this.setSpeedTypeAndSpeedRank(speed_rule);
+        this.#setSpeedTypeAndSpeedRank(speed_rule);
     }
 
-    setSpeedTypeAndSpeedRank(speed_rule) {
+    #setSpeedTypeAndSpeedRank(speed_rule = {}) {
         if (this.speed_rule) {
             let regex = /([a-z]{3,4})-(\d)/
             let matchArray = speed_rule.match(regex);
             this.speed_type = matchArray[1];
             this.speed_rank = this.speed_type === "high" ? matchArray[2] : 5 - matchArray[2];
         }
+    }
+
+    static async build(shipClass = {}) {
+        shipClass.ship_type_id = await ShipTypeDao.getShipTypeIdNameBy(shipClass.ship_type_id);
+        return new ShipTypeModel(shipClass);
     }
 }
 
