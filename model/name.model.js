@@ -4,11 +4,10 @@ This model is present for name field of ship girl, equipment...
  */
 class NameModel {
     constructor({
-                    ja_jp, zh_cn, ja_kana, ja_romaji, en_us
+                    ja_jp, zh_cn, ja_romaji, en_us
                 } = {}) {
 
         this.ja_jp = ja_jp || '';
-        this.ja_kana = ja_kana || '';
         this.zh_cn = zh_cn || '';
         // Specially, ship girl "U-511"
         // (name is constructed by english letter, while name.en_us not exists in ships.nedb)

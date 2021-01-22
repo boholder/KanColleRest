@@ -7,12 +7,13 @@ import {FieldEntityArray, SimplifiedFieldEntityModel} from "./simplified-field-e
 import {ShipClassModel} from "./ship/ship-class.model.js";
 import {ShipModel} from "./ship.model.js";
 import {ShipStateModel} from "./ship/ship-state.model";
-import {ModernizationModel} from "./ship/ship-modernization.model";
+import {ShipModernizationModel} from "./ship/ship-modernization.model";
 import {RemodelModel} from "./ship/ship-remodel.model";
 import {CreatorsModel} from "./ship/ship-creators.model";
 import {CapabilitiesModel} from "./ship/ship-capabilities.model";
 import {ShipNameModel} from "./ship/ship-name.model";
 import {ShipMainTypeModel} from "./ship/ship-main-type.model";
+import {ShipSeasonalCgTypeModel} from "./ship/ship-seasonal-cg-type.model";
 
 const exampleDismantlingGainArray = [1, 2, 10, 0];
 const mockedDismantlingGain = new DismantlementGainModel(exampleDismantlingGainArray);
@@ -157,7 +158,7 @@ const exampleShipStateJson = {
 const mockedShipState = new ShipStateModel(exampleShipStateJson);
 
 const exampleModernizationGainArray = [2, 2, 1, 1];
-const mockedModernizationGain = new ModernizationModel(exampleModernizationGainArray);
+const mockedModernizationGain = new ShipModernizationModel(exampleModernizationGainArray);
 
 const exampleRemodelJson = {
     "prev": 44,
@@ -295,3 +296,13 @@ const exampleShipName = {
 const exampleShipNameSuffix = {"ja_jp": "改", "ja_romaji": "Kai", "zh_cn": "改", "id": 1, "_id": "1P6WM4aDPXQUpZP0"};
 const mockedShipName = new ShipNameModel(exampleShipName);
 export {mockedShipName};
+const exampleShipSeasonalCgTypeJson = {
+    "time": {"en_us": "Winter", "zh_cn": "冬季", "ja_jp": "冬"},
+    "name": {"ja_jp": "麦酒乾杯", "en_us": "麦酒乾杯", "zh_cn": "麦酒干杯"},
+    "id": 49,
+    "sort": 34,
+    "_id": "07G035Akpqwr2i3k"
+};
+const mockedShipSeasonalCgType = ShipSeasonalCgTypeModel.build(exampleShipSeasonalCgTypeJson);
+export {mockedShipSeasonalCgType};
+export {exampleShipSeasonalCgTypeJson};

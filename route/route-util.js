@@ -1,6 +1,6 @@
 import config from 'config'
 
-class ConfigUtil {
+class RouteUtil {
     static getCommonUrlPrefix() {
         let protocol = config.get('server.use_TLS') ? "https" : "http";
         let domain = config.get('server.domain');
@@ -13,8 +13,8 @@ class ConfigUtil {
         // if api = 'ship-cg'
         let api = config.get(apiConfigKey);
         // then return http://localhost:3000/v1/ship-cg?
-        return `${this.getCommonUrlPrefix()}/${api}?`;
+        return `${this.getCommonUrlPrefix()}/${api}`;
     }
 }
 
-export {ConfigUtil}
+export {RouteUtil}

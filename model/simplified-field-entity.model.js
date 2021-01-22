@@ -36,14 +36,12 @@ class FieldEntityArray extends Array {
         this.name.ja_jp = [];
         this.name.en_us = [];
         this.name.zh_cn = [];
-        this.name.ja_kana = [];
         for (let entity of fieldEntityArray) {
             this.id.push(entity.id);
             let entityName = entity.name;
             this.name.ja_jp.push(entityName.ja_jp);
             this.name.en_us.push(entityName.en_us);
             this.name.zh_cn.push(entityName.zh_cn);
-            this.name.ja_kana.push(entityName.ja_kana);
         }
     }
 
@@ -51,11 +49,11 @@ class FieldEntityArray extends Array {
         return new FieldEntityArray(fieldEntityArray);
     }
 
-    static async buildModelFromIdArray(idArray = [], getOneFromDbById) {
+    static async buildModelFromIdArray(idArray = [], dao) {
         let entityArray = [];
         for (let id of idArray) {
             // only need one id since their name is same (only suffix is diff).
-            let entity = await getOneFromDbById(id);
+            let entity = await dao.getModelBy(id);
             entityArray.push(entity);
         }
         return FieldEntityArray.buildModelFromEntityArray(entityArray);

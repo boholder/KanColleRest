@@ -9,8 +9,10 @@ class EquipmentTypeModel {
                 } = {}) {
         this.id = id;
         this.name = new NameModel(name);
+        // TODO unfinished
         this.equipable_ship_types = equipable_on_type || new FieldEntityArray();
         this.main_attribute = main_attribute || '';
+        // TODO unfinished
         this.equipable_ships = equipable_extra_ship || new FieldEntityArray();
         this.id_in_game = id_ingame || NaN;
         this.transport_point = tp || 0;

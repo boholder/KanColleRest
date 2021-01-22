@@ -1,50 +1,42 @@
-import config from 'config';
-import {ConfigUtil} from "../../util/config-util.js";
+import {ShipCgRouteUtil} from "../../route/ship-cg-route-util.js";
+import {ShipSeasonalCgModel} from "./ship-seasonal-cg.model";
 
 /*
 Part of ShipModel, contains ship's CG & seasonal CG api query urls.
  */
 class ShipCgModel {
-    static cgDirectory = config.get('resource.image.wctf_image_dir');
-    static #apiConFigKeyPrefix = this.#concatApiConfigKeyPrefix();
-    static #urlPrefix = this.#getUrlPrefix();
-    static #shipIdParam = config.get(`${this.#apiConFigKeyPrefix}.ship_id`);
-    static #cgIdParam = config.get(`${this.#apiConFigKeyPrefix}.cg_id`);
-
-    static #concatApiConfigKeyPrefix() {
-        // 'v1'
-        let apiVersion = config.get('api.current');
-        // 'api.v1.ship_cg'
-        return 'api.' + apiVersion + 'ship_cg';
-    }
-
-    static #getUrlPrefix() {
-        return ConfigUtil.concatApiUrl(`${this.#apiConFigKeyPrefix}.route`)
-    }
-
     constructor({id, illust_extra} = {}) {
         this.ship_id = id;
-        this.cg_urls = {normal: {}, seasonal: {}};
-        this.cg_urls.normal.banner = this.#concatCgUrl(0);
-        this.cg_urls.normal.banner_masked = this.#concatCgUrl('0-1');
-        this.cg_urls.normal.banner_dmged = this.#concatCgUrl(1);
-        this.cg_urls.normal.banner_dmged_masked = this.#concatCgUrl('1-1');
-        this.cg_urls.normal.card = this.#concatCgUrl(2);
-        this.cg_urls.normal.card_dmged = this.#concatCgUrl(3);
-        this.cg_urls.normal.whole_body = this.#concatCgUrl(8);
-        this.cg_urls.normal.whole_body_dmged = this.#concatCgUrl(9);
-        this.cg_urls.normal.head_masked = this.#concatCgUrl(10);
-        this.cg_urls.normal.head_dmged_masked = this.#concatCgUrl(11);
+        this.normal = this.#concatNormalCgUrls();
+        delete this.ship_id;
+        this.seasonal = illust_extra || [];
+    }
 
-        this.cg_urls.seasonal
+    #concatNormalCgUrls() {
+        return {
+            banner: this.#concatCgUrl('n0'),
+            banner_masked: this.#concatCgUrl('n0-1'),
+            banner_dmged: this.#concatCgUrl('n1'),
+            banner_dmged_masked: this.#concatCgUrl('n1-1'),
+            card: this.#concatCgUrl('n2'),
+            card_dmged: this.#concatCgUrl('n3'),
+            whole_body: this.#concatCgUrl('n8'),
+            whole_body_dmged: this.#concatCgUrl('n9'),
+            head_masked: this.#concatCgUrl('n10'),
+            head_dmged_masked: this.#concatCgUrl('n11')
+        }
     }
 
     #concatCgUrl(cgId) {
-        // http://localhost:3000/v1/ship-cg?shipid={shipId}&cgid={cgId}
-        return `${this.#urlPrefix}?${this.#shipIdParam}=${this.ship_id}&${this.#cgIdParam}=${cgId}`;
+        return ShipCgRouteUtil.concatCgUrl(this.ship_id, cgId);
     }
 
-    static build(ship = {}) {
+    static async build(ship = {}) {
+        if (ship.illust_extra) {
+            ship.illust_extra = await ShipSeasonalCgModel.buildModelArrayFromShip(ship);
+        }
         return new ShipCgModel(ship);
     }
 }
+
+export {ShipCgModel};

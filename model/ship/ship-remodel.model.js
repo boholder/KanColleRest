@@ -14,7 +14,7 @@ class RemodelModel {
         this.next.cost.steel = steel || NaN;
     }
 
-    static build(remodel, remodelCost) {
+    static build(remodel = {}, remodelCost = {}) {
         return new RemodelModel(remodel, remodelCost);
     }
 }

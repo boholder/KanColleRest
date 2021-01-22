@@ -40,13 +40,13 @@ class CreatorModel {
 
     }
 
-    static async #getShipIdNameFromDbBy(shipIdArray) {
+    static async #getShipIdNameFromDbBy(shipIdArray = []) {
         let idArray = [];
         for (let subArray of shipIdArray) {
             // only need one id since their name is same (only suffix is diff)
             idArray.push(subArray[0]);
         }
-        return FieldEntityArray.buildModelFromIdArray(idArray,ShipDao.getIdNameBy);
+        return FieldEntityArray.buildModelFromIdArray(idArray, ShipDao);
     }
 }
 

@@ -9,7 +9,7 @@ class CapabilitiesModel {
         this.participate_night_battle_when_equip_swordfish = participate_night_battle_when_equip_swordfish ? true : false;
     }
 
-    static build(capabilities){
+    static build(capabilities = {}) {
         return new CapabilitiesModel(capabilities);
     }
 }

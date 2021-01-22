@@ -21,7 +21,7 @@ class ShipTypeModel {
     }
 
     static async getEquipIdNameFromDbBy(equipIdArray = []) {
-        return FieldEntityArray.buildModelFromIdArray(equipIdArray, EquipmentDao.getIdNameBy);
+        return FieldEntityArray.buildModelFromIdArray(equipIdArray, EquipmentDao);
     }
 }
 

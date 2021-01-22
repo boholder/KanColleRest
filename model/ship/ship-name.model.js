@@ -3,19 +3,21 @@ Ship name has special suffix.
  */
 import {ShipNameSuffixDao} from "../../db/dao/ship-name-suffix.dao.js";
 import {NameModel} from "../name.model.js";
-import {ShipNameSuffixModel} from "./ship-name-suffix.model.js";
 
 class ShipNameModel extends NameModel {
     constructor({
-                    ja_jp, ja_kana, ja_romaji, zh_cn,
+                    ja_jp, ja_romaji, zh_cn, ja_kana,
                     en_us, suffix
                 } = {}) {
 
-        super({ja_jp, ja_kana, ja_romaji, zh_cn, en_us});
-        this.#addNameSuffixToFields(suffix);
+        super({ja_jp, ja_romaji, zh_cn, en_us});
+        this.ja_kana = ja_kana;
+        if (suffix) {
+            this.#addNameSuffixToNames(suffix);
+        }
     }
 
-    #addNameSuffixToFields(suffix = {}) {
+    #addNameSuffixToNames(suffix = {}) {
         this.ja_jp = this.#appendSuffixDependsOn(this.ja_jp, suffix.ja_jp);
         this.ja_kana = this.#appendSuffixDependsOn(this.ja_kana, suffix.ja_jp);
         this.zh_cn = this.#appendSuffixDependsOn(this.zh_cn, suffix.zh_cn);
@@ -36,7 +38,9 @@ class ShipNameModel extends NameModel {
     }
 
     static async build(shipName = {}) {
-        shipName.suffix = await ShipNameSuffixDao.getModelBy(shipName.suffix);
+        if (shipName.suffix) {
+            shipName.suffix = await ShipNameSuffixDao.getModelBy(shipName.suffix);
+        }
         return new ShipNameModel(shipName);
     }
 

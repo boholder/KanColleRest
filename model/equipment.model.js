@@ -1,6 +1,6 @@
-// TODO unfinished, just for developing ship API using
 import {NameModel} from "./name.model.js";
 
+// TODO unfinished, just for developing ship API using
 class EquipmentModel {
     constructor({id, name} = {}) {
         this.id = id;

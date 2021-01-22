@@ -26,7 +26,7 @@ class ShipStateModel {
         this.armor_max = armor_max || NaN;
         this.evasion = evasion || NaN;
         this.evasion_max = evasion_max || NaN;
-        this.carry = carry || NaN;
+        this.carry = carry || 0;
         this.speed = speed || NaN;
         this.range = range || NaN;
         this.line_of_sight = los || NaN;
@@ -35,7 +35,7 @@ class ShipStateModel {
         this.luck_max = luck_max || NaN;
     }
 
-    static build(state){
+    static build(state = {}) {
         return new ShipStateModel(state);
     }
 }

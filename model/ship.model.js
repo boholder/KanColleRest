@@ -5,18 +5,18 @@ Classes in this file represent data structures in ships.nedb.
  */
 import {ShipStateModel} from "./ship/ship-state.model.js";
 import {ShipNameModel} from "./ship/ship-name.model";
-import {ShipTypeModel} from "./ship/ship-type.model";
-import {ShipClassModel} from "./ship/ship-class.model";
-import {ShipRareModel} from "./ship/ship-rare.model";
 import {EquipmentDao} from "../db/dao/equipment.dao";
 import {DismantlementGainModel} from "./dismantlement-gain.model";
-import {ModernizationModel} from "./ship/ship-modernization.model";
+import {ShipModernizationModel} from "./ship/ship-modernization.model";
 import {RemodelModel} from "./ship/ship-remodel.model";
 import {EquipmentTypeDao} from "../db/dao/equipment-type.dao";
-import {CreatorsModel} from "./ship/ship-creators.model";
 import {FieldEntityArray} from "./simplified-field-entity.model";
 import {LinkModel} from "./link.model";
 import {CapabilitiesModel} from "./ship/ship-capabilities.model";
+import {ShipCgModel} from "./ship/ship-cg.model";
+import {ShipTypeDao} from "../db/dao/ship-type.dao";
+import {ShipClassDao} from "../db/dao/ship-class.dao";
+import {CreatorDao} from "../db/dao/creator.dao";
 
 
 /*
@@ -27,7 +27,7 @@ class ShipModel {
     constructor(ship = {}) {
         this.id = ship.id;
         this.no = ship.no;
-        this.name = ShipNameModel.build(ship.name);
+        this.name = ship.name;
         this.type = ship.type;
         this.class = ship.class;
         this.class_no = ship.class_no;
@@ -40,22 +40,25 @@ class ShipModel {
         this.equipment_slot = ship.slot;
         this.initial_equipments = ship.equip;
         this.dismentlement_gain = DismantlementGainModel.build(ship.scrap);
-        this.modernization_provides = ModernizationModel.build(ship.modernization);
+        this.modernization_provides = ShipModernizationModel.build(ship.modernization);
         this.remodel = RemodelModel.build(ship.remodel, ship.remodel_cost);
         this.additinal_item_types = ship.additinal_item_types;
         this.links = LinkModel.buildLinkArray(ship.links);
         this.special_capabilities = CapabilitiesModel.build(ship.capabilities);
-        // TODO CG & seasonal CG not added yet
+        this.cg = ship.cg;
     }
 
     static async build(ship) {
-        ship.rare = await ShipRareModel.build(ship.rare);
-        ship.type = await ShipTypeModel.build(ship.type);
-        ship.class = await ShipClassModel.build(ship.class);
+        ship.name = await ShipNameModel.build(ship.name);
+        // TODO query rare nedb when PR rare db file to WCTF-DB project
+        // ship.rare = await ShipRareModel.build(ship.rare);
+        ship.type = await ShipTypeDao.getModelBy(ship.type);
+        ship.class = await ShipClassDao.getModelBy(ship.class);
         ship.equip = await this.#queryInitEquipsInfoAndBuildArray(ship.equip);
         ship.additinal_item_types = await
-            FieldEntityArray.buildModelFromIdArray(ship.additional_item_types, EquipmentTypeDao.getIdNameBy);
-        ship.rels = await CreatorsModel.build(ship.rels);
+            FieldEntityArray.buildModelFromIdArray(ship.additional_item_types, EquipmentTypeDao);
+        ship.rels = await CreatorDao.getModelBy(ship.rels);
+        ship.cg = await ShipCgModel.build(ship);
         return new ShipModel(ship);
     }
 
@@ -72,7 +75,7 @@ class ShipModel {
             let result = await EquipmentDao.getIdNameBy(equip.id);
             result.improvement_star = equip.star;
             return result;
-        } else if (equip instanceof Number) {
+        } else if (typeof equip === 'number') {
             let result = await EquipmentDao.getIdNameBy(equip);
             result.improvement_star = 0;
             return result;
