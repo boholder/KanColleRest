@@ -1,6 +1,9 @@
 import config from 'config';
 import {ConfigUtil} from "../../util/config-util.js";
 
+/*
+Part of ShipModel, contains ship's CG & seasonal CG api query urls.
+ */
 class ShipCgModel {
     static cgDirectory = config.get('resource.image.wctf_image_dir');
     static #apiConFigKeyPrefix = this.#concatApiConfigKeyPrefix();
@@ -19,21 +22,29 @@ class ShipCgModel {
         return ConfigUtil.concatApiUrl(`${this.#apiConFigKeyPrefix}.route`)
     }
 
-    // TODO unfinished yet
-    constructor({id}) {
+    constructor({id, illust_extra} = {}) {
         this.ship_id = id;
-        this.normal = {};
-        this.normal.banner = urlURI + '0';
-        this.normal.banner_dmged = urlURI + '1';
-        this.normal.card = urlURI + '2';
-        this.normal.card_dmged = urlURI + '3';
-        this.normal.no_contour = urlURI + '8';
-        this.normal.no_contour_dmged = urlURI + '9';
+        this.cg_urls = {normal: {}, seasonal: {}};
+        this.cg_urls.normal.banner = this.#concatCgUrl(0);
+        this.cg_urls.normal.banner_masked = this.#concatCgUrl('0-1');
+        this.cg_urls.normal.banner_dmged = this.#concatCgUrl(1);
+        this.cg_urls.normal.banner_dmged_masked = this.#concatCgUrl('1-1');
+        this.cg_urls.normal.card = this.#concatCgUrl(2);
+        this.cg_urls.normal.card_dmged = this.#concatCgUrl(3);
+        this.cg_urls.normal.whole_body = this.#concatCgUrl(8);
+        this.cg_urls.normal.whole_body_dmged = this.#concatCgUrl(9);
+        this.cg_urls.normal.head_masked = this.#concatCgUrl(10);
+        this.cg_urls.normal.head_dmged_masked = this.#concatCgUrl(11);
+
+        this.cg_urls.seasonal
     }
 
-    static #getCgQueryUrl(shipId, cgId) {
+    #concatCgUrl(cgId) {
         // http://localhost:3000/v1/ship-cg?shipid={shipId}&cgid={cgId}
-        return `${this.#urlPrefix}?${this.#shipIdParam}=${shipId}&${this.#cgIdParam}=${cgId}`;
+        return `${this.#urlPrefix}?${this.#shipIdParam}=${this.ship_id}&${this.#cgIdParam}=${cgId}`;
     }
 
+    static build(ship = {}) {
+        return new ShipCgModel(ship);
+    }
 }

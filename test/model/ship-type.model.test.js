@@ -1,7 +1,7 @@
 import {FieldEntityArray} from "../../model/simplified-field-entity.model";
 import {mockedMainShipType, mockedShipType} from "../../model/example-model-instances";
 import {ShipTypeModel} from "../../model/ship/ship-type.model";
-import {MainShipTypeModel} from "../../model/ship/main-ship-type.model";
+import {ShipMainTypeModel} from "../../model/ship/ship-main-type.model";
 
 test('mocked ship type object dose not have raw id', () => {
     return mockedShipType.then(value => {

@@ -6,6 +6,7 @@ class ShipRareModel {
         this.name = NameModel.build(name);
     }
 
+    // TODO query rare nedb when PR rare db file to WCTF-DB project
     static build(rare = {}) {
         return new ShipRareModel(rare);
     }

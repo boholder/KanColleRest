@@ -12,7 +12,7 @@ import {RemodelModel} from "./ship/ship-remodel.model";
 import {CreatorsModel} from "./ship/ship-creators.model";
 import {CapabilitiesModel} from "./ship/ship-capabilities.model";
 import {ShipNameModel} from "./ship/ship-name.model";
-import {MainShipTypeModel} from "./ship/main-ship-type.model";
+import {ShipMainTypeModel} from "./ship/ship-main-type.model";
 
 const exampleDismantlingGainArray = [1, 2, 10, 0];
 const mockedDismantlingGain = new DismantlementGainModel(exampleDismantlingGainArray);
@@ -113,7 +113,7 @@ const exampleMainShipTypeJson = {
     "id": 4,
     "_id": "STrlqZfKVFD8K7Vw"
 }
-const mockedMainShipType = new MainShipTypeModel(exampleMainShipTypeJson);
+const mockedMainShipType = new ShipMainTypeModel(exampleMainShipTypeJson);
 export {mockedMainShipType};
 export {mockedShipType};
 

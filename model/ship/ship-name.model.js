@@ -36,7 +36,7 @@ class ShipNameModel extends NameModel {
     }
 
     static async build(shipName = {}) {
-        shipName.suffix = ShipNameSuffixModel.build(await ShipNameSuffixDao.getShipNameSuffixBy(shipName.suffix));
+        shipName.suffix = await ShipNameSuffixDao.getModelBy(shipName.suffix);
         return new ShipNameModel(shipName);
     }
 

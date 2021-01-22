@@ -6,7 +6,7 @@ In Kancolle there are 6 main ship types:
 import {NameModel} from "../name.model";
 import {FieldEntityArray} from "../simplified-field-entity.model";
 
-class MainShipTypeModel {
+class ShipMainTypeModel {
     constructor({name, types, id} = {}) {
         this.id = id;
         this.name = new NameModel(name);
@@ -14,4 +14,4 @@ class MainShipTypeModel {
     }
 }
 
-export {MainShipTypeModel};
+export {ShipMainTypeModel};

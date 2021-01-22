@@ -54,7 +54,7 @@ class ShipModel {
         ship.class = await ShipClassModel.build(ship.class);
         ship.equip = await this.#queryInitEquipsInfoAndBuildArray(ship.equip);
         ship.additinal_item_types = await
-            FieldEntityArray.buildModelFromIdArray(ship.additional_item_types, EquipmentTypeDao.getEquipmentTypeIdNameBy);
+            FieldEntityArray.buildModelFromIdArray(ship.additional_item_types, EquipmentTypeDao.getIdNameBy);
         ship.rels = await CreatorsModel.build(ship.rels);
         return new ShipModel(ship);
     }
@@ -69,11 +69,11 @@ class ShipModel {
 
     static async #queryEquipNameFromDbAndBuildModel(equip = {}) {
         if (equip instanceof Object) {
-            let result = await EquipmentDao.getEquipmentIdNameBy(equip.id);
+            let result = await EquipmentDao.getIdNameBy(equip.id);
             result.improvement_star = equip.star;
             return result;
         } else if (equip instanceof Number) {
-            let result = await EquipmentDao.getEquipmentIdNameBy(equip);
+            let result = await EquipmentDao.getIdNameBy(equip);
             result.improvement_star = 0;
             return result;
         }

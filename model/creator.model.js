@@ -46,7 +46,7 @@ class CreatorModel {
             // only need one id since their name is same (only suffix is diff)
             idArray.push(subArray[0]);
         }
-        return FieldEntityArray.buildModelFromIdArray(idArray,ShipDao.getShipIdNameBy);
+        return FieldEntityArray.buildModelFromIdArray(idArray,ShipDao.getIdNameBy);
     }
 }
 

@@ -36,7 +36,7 @@ class ShipClassModel {
     }
 
     static async build(shipClass = {}) {
-        shipClass.ship_type_id = await ShipTypeDao.getShipTypeIdNameBy(shipClass.ship_type_id);
+        shipClass.ship_type_id = await ShipTypeDao.getIdNameBy(shipClass.ship_type_id);
         return new ShipTypeModel(shipClass);
     }
 }

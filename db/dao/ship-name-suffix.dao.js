@@ -1,13 +1,12 @@
-import {BaseDao, Datastore, DB_FILE_NAME} from "./base.dao.js";
+import {BaseDao, DB_FILE_NAME} from "./base.dao.js";
+import {ShipNameSuffixModel} from "../../model/ship/ship-name-suffix.model";
 
 class ShipNameSuffixDao extends BaseDao {
-    static #shipNameSuffixDb = Datastore.create(
-        super.buildDbCreationOptionWith(DB_FILE_NAME.ship_name_suffix)
-    );
+    static #callInit = super.initDatastoreWith(DB_FILE_NAME.ship_name_suffix);
 
-    static async getShipNameSuffixBy(id) {
+    static async getModelBy(id) {
         // not map to model, only ShipNameModel use it.
-        return super.getOneById(this.#shipNameSuffixDb, id, {_id: 0});
+        return ShipNameSuffixModel.build(await super.getOneById(id, {_id: 0}));
     }
 }
 
