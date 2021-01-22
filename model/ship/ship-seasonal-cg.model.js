@@ -1,6 +1,6 @@
 import {ShipSeasonalCgTypeDao} from "../../db/dao/ship-seasonal-cg-type.dao";
 import {ShipSeasonalCgDao} from "../../db/dao/ship-seasonal-cg.dao";
-import {ShipCgRouteUtil} from "../../route/ship-cg-route-util";
+import {ShipCgRouteUtil} from "../../route/util/ship-cg-route.util";
 
 class ShipSeasonalCgModel {
     constructor({id, type} = {}) {
@@ -22,8 +22,8 @@ class ShipSeasonalCgModel {
         for (let id of cgArray) {
             let cg = await ShipSeasonalCgDao.getModelBy(id);
             cg.url = {};
-            cg.url.whole_body = ShipCgRouteUtil.concatCgUrl(ship.id, `e${id}`);
-            cg.url.whole_body_dmged = ShipCgRouteUtil.concatCgUrl(ship.id, `d${id}`);
+            cg.url.whole_body = ShipCgRouteUtil.concatUrlWith(ship.id, `e${id}`);
+            cg.url.whole_body_dmged = ShipCgRouteUtil.concatUrlWith(ship.id, `d${id}`);
             result.push(cg);
         }
         return result;

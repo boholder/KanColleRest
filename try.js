@@ -1,4 +1,8 @@
-let a =1;
-if (a instanceof Number){
-    console.log(a);
-}
+import express from "express";
+import {router} from "./route/route.js";
+
+const app = express();
+app.use(router);
+app.listen(3000, function () {
+    console.log('listening on 3000')
+})

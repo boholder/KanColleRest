@@ -1,4 +1,4 @@
-import {ShipCgRouteUtil} from "../../route/ship-cg-route-util.js";
+import {ShipCgRouteUtil} from "../../route/util/ship-cg-route.util.js";
 import {ShipSeasonalCgModel} from "./ship-seasonal-cg.model";
 
 /*
@@ -28,7 +28,7 @@ class ShipCgModel {
     }
 
     #concatCgUrl(cgId) {
-        return ShipCgRouteUtil.concatCgUrl(this.ship_id, cgId);
+        return ShipCgRouteUtil.concatUrlWith(this.ship_id, cgId);
     }
 
     static async build(ship = {}) {

@@ -35,33 +35,36 @@
     }
   },
   "api": {
-    "current": "v1",
+    "current_version": "v1",
     "v1": {
       "root": {
+        "route": ""
       },
       "ship": {
-        "route": "ship",
-        "param": {
-          "ship": "ship",
-          "match_format": "matchfmt",
-          "match_format_value": [
-            "ja_kana",
-            "ja_jp",
-            "en_us",
-            "zh_cn"
-          ],
-          "response_format": "resfmt",
-          "response_format_value": [
-            "json",
-            "img"
-          ]
-        }
-      },
-      "ship_cg": {
-        "route": "ship-cg",
-        "param": {
-          "ship_id": "shipid",
-          "cg_id": "cgid"
+        "ship_info": {
+          "route": "info",
+          "param": {
+            "ship": "ship",
+            "match_format": "matchfmt",
+            "match_format_values": [
+              "ja_kana",
+              "ja_jp",
+              "en_us",
+              "zh_cn"
+            ],
+            "response_format": "resfmt",
+            "response_format_values": [
+              "json",
+              "img"
+            ]
+          }
+        },
+        "ship_cg": {
+          "route": "cg",
+          "param": {
+            "ship_id": "shipid",
+            "cg_id": "cgid"
+          }
         }
       }
     }
