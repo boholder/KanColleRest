@@ -1,29 +1,23 @@
 "use strict";
 
 import express from "express";
+import {ShipInfoRouteUtil} from "../util/route/ship-info-route.util.js";
+import {ShipCgRouteUtil} from "../util/route/ship-cg-route.util.js";
 
 const router = express.Router();
 
 // 主页路由
 router.get('/', (req, res) => {
-    Controller.root(req, res);
-});
+    RootRoute(req, res);
+})
 
-class Controller {
-    static root(req, res) {
+// TODO return server error HTTP code when db, model get error
+router.get(ShipInfoRouteUtil.route, (async (req, res) => {
+    await ShipInfoRoute(req, res);
+}));
 
-        // construct the response
-        let response = {
-            "project_url":
-                "https://github.com/boholder/KanColleREST"
-        };
-
-        res.writeHead(200, {
-            'Content-Type': 'application/json;charset=utf-8'
-        });
-        res.end(JSON.stringify(response, null, "  "));
-    }
-
-}
+router.get(ShipCgRouteUtil.route, (async (req, res) => {
+    await ShipCGRoute(req, res);
+}))
 
 export {router};

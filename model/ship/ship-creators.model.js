@@ -1,4 +1,6 @@
 import {CreatorModel} from "../creator.model.js";
+import {ModelBuildError} from "../util/error.js";
+import {logger} from "../../config/winston-logger.js";
 
 class CreatorsModel {
     constructor({cv, illustrator} = {}) {
@@ -7,8 +9,19 @@ class CreatorsModel {
     }
 
     static async build(creators = {}) {
-        creators.cv = CreatorModel.build(creators.cv);
-        creators.illustrator = CreatorModel.build(creators.illustrator);
+        try {
+            return this.buildModel(creators);
+        } catch (e) {
+            logger.error(
+                new ModelBuildError('CreatorsModel', e)
+            );
+            return new CreatorsModel(creators);
+        }
+    }
+
+    static buildModel(creators) {
+        creators.cv = CreatorModel.buildModel(creators.cv);
+        creators.illustrator = CreatorModel.buildModel(creators.illustrator);
         return new CreatorModel(creators);
     }
 }

@@ -1,9 +1,11 @@
+import {ShipNameSuffixDao} from "../../db/dao/ship-name-suffix.dao.js";
+import {NameModel} from "../name.model.js";
+import {ModelBuildError} from "../util/error.js";
+import {logger} from "../../config/winston-logger.js";
+
 /*
 Ship name has special suffix.
  */
-import {ShipNameSuffixDao} from "../../db/dao/ship-name-suffix.dao.js";
-import {NameModel} from "../name.model.js";
-
 class ShipNameModel extends NameModel {
     constructor({
                     ja_jp, ja_romaji, zh_cn, ja_kana,
@@ -38,12 +40,22 @@ class ShipNameModel extends NameModel {
     }
 
     static async build(shipName = {}) {
+        try {
+                    return await this.buildModel(shipName);
+        }catch (e) {
+            logger.error(
+                new ModelBuildError('ShipNameModel', e)
+            );
+            return new ShipNameModel();
+        }
+    }
+
+    static async buildModel(shipName) {
         if (shipName.suffix) {
             shipName.suffix = await ShipNameSuffixDao.getModelBy(shipName.suffix);
         }
         return new ShipNameModel(shipName);
     }
-
 }
 
 export {ShipNameModel};

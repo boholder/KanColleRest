@@ -5,7 +5,7 @@ class CreatorDao extends BaseDao {
     static #callInit = super.initDatastoreWith(DB_FILE_NAME.creator);
 
     static async getModelBy(id) {
-        return CreatorModel.build(await super.getOneById(id, {picture: 0, _id: 0}));
+        return CreatorModel.buildModel(await super.getOneByIdAndHandleError(id, {picture: 0, _id: 0}));
     }
 }
 

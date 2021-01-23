@@ -67,25 +67,3 @@ function getShipCGImgPath(cgid, eid) {
     return imgpath;
 }
 
-function resHead200Json(res, response) {
-    res.writeHead(200, {
-        'Content-Type': 'application/json;charset=utf-8'
-    });
-    res.end(JSON.stringify(response, null, "  "));
-}
-
-function resHead200Png(imgpath, res) {
-    var img = fs.readFileSync(imgpath);
-    res.writeHead(200, { 'Content-Type': 'image/png' });
-    res.end(img, 'binary');
-}
-
-function makeJsonResponse(code, msg, ObjArray, res) {
-    var response = {
-        "code": code,
-        "message": msg,
-        "result": ObjArray
-    };
-    resHead200Json(res, response);
-    return response;
-}

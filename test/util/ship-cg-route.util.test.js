@@ -1,4 +1,4 @@
-import {ShipCgRouteUtil} from "../../route/util/ship-cg-route.util.js";
+import {ShipCgRouteUtil} from "../../util/route/ship-cg-route.util.js";
 
 test('print all constants output', () => {
     let outputs = [];

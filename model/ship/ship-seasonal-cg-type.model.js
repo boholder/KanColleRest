@@ -1,4 +1,4 @@
-import {NameModel} from "../name.model";
+import {NameModel} from "../name.model.js";
 
 class ShipSeasonalCgTypeModel {
     constructor({time, name, id} = {}) {

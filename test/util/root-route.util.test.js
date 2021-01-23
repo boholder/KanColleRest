@@ -1,9 +1,9 @@
-import {RootRouteUtil} from "../../route/util/root-route.util.js";
+import {BaseRouteUtil} from "../../util/route/base-route.util.js";
 
 test.skip('print all methods output', () => {
     let outputs = [];
-    outputs.push(RootRouteUtil.getRootUrl());
-    outputs.push(RootRouteUtil.getVersionedUrl());
-    outputs.push(RootRouteUtil.concatVersionedUrlWith('api'));
+    outputs.push(BaseRouteUtil.getRootUrl());
+    outputs.push(BaseRouteUtil.getVersionUrl());
+    outputs.push(BaseRouteUtil.concatVersionUrlWith('api'));
     console.log(outputs);
 })

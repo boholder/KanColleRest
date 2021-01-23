@@ -7,7 +7,7 @@ function RootRoute(req, res) {
     var response = {
         "project_url":
             "https://github.com/boholder/KanColleREST",
-        "documentation_url":
+        "document_url":
             "https://github.com/boholder/KanColleREST/wiki",
         "ship_info_url": config.protocol + config.serverDomain
             + "/v1/ship/info",

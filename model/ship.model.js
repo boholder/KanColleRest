@@ -1,26 +1,25 @@
 "use strict";
 
-/*
-Classes in this file represent data structures in ships.nedb.
- */
 import {ShipStateModel} from "./ship/ship-state.model.js";
-import {ShipNameModel} from "./ship/ship-name.model";
-import {EquipmentDao} from "../db/dao/equipment.dao";
-import {DismantlementGainModel} from "./dismantlement-gain.model";
-import {ShipModernizationModel} from "./ship/ship-modernization.model";
-import {RemodelModel} from "./ship/ship-remodel.model";
-import {EquipmentTypeDao} from "../db/dao/equipment-type.dao";
-import {FieldEntityArray} from "./simplified-field-entity.model";
-import {LinkModel} from "./link.model";
-import {CapabilitiesModel} from "./ship/ship-capabilities.model";
-import {ShipCgModel} from "./ship/ship-cg.model";
-import {ShipTypeDao} from "../db/dao/ship-type.dao";
-import {ShipClassDao} from "../db/dao/ship-class.dao";
-import {CreatorDao} from "../db/dao/creator.dao";
-
+import {ShipNameModel} from "./ship/ship-name.model.js";
+import {EquipmentDao} from "../db/dao/equipment.dao.js";
+import {DismantlementGainModel} from "./dismantlement-gain.model.js";
+import {ShipModernizationModel} from "./ship/ship-modernization.model.js";
+import {RemodelModel} from "./ship/ship-remodel.model.js";
+import {EquipmentTypeDao} from "../db/dao/equipment-type.dao.js";
+import {FieldEntityArray} from "./simplified-field-entity.model.js";
+import {LinkModel} from "./link.model.js";
+import {CapabilitiesModel} from "./ship/ship-capabilities.model.js";
+import {ShipCgModel} from "./ship/ship-cg.model.js";
+import {ShipTypeDao} from "../db/dao/ship-type.dao.js";
+import {ShipClassDao} from "../db/dao/ship-class.dao.js";
+import {CreatorDao} from "../db/dao/creator.dao.js";
+import {ModelBuildError} from "../util/error.js";
+import {logger} from "../config/winston-logger.js";
 
 /*
 It contains one ship girl's information of one model's information.
+It represent data structures in ships.nedb.
  */
 class ShipModel {
     // The origin json contains "class" field so I can't construct it in constructor parameter.
@@ -48,7 +47,18 @@ class ShipModel {
         this.cg = ship.cg;
     }
 
-    static async build(ship) {
+    static async build(ship = {}) {
+        try {
+            return this.#buildModel(ship);
+        } catch (e) {
+            logger.error(
+                new ModelBuildError('ShipModel', e)
+            );
+            return new ShipModel(ship);
+        }
+    }
+
+    static async #buildModel(ship = {}) {
         ship.name = await ShipNameModel.build(ship.name);
         // TODO query rare nedb when PR rare db file to WCTF-DB project
         // ship.rare = await ShipRareModel.build(ship.rare);

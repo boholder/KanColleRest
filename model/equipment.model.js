@@ -1,4 +1,6 @@
 import {NameModel} from "./name.model.js";
+import {ModelBuildError} from "../util/error.js";
+import {logger} from "../config/winston-logger.js";
 
 // TODO unfinished, just for developing ship API using
 class EquipmentModel {
@@ -7,8 +9,13 @@ class EquipmentModel {
         this.name = new NameModel(name);
     }
 
-    static build(equip={}){
-        return new EquipmentModel(equip);
+    static async build(equip = {}) {
+        try {
+            return new EquipmentModel(equip);
+        } catch (error) {
+            logger.error(new ModelBuildError('EquipmentModel', error));
+            return new EquipmentModel(equip);
+        }
     }
 }
 

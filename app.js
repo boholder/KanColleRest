@@ -1,24 +1,18 @@
 "use strict";
 
-// Get config consts
-import {expressWinstonLogger} from "./config/winston-logger.js";
+import config from 'config'
+import {expressWinstonLogger, logger} from "./config/winston-logger.js";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import {router} from "./route/route.js";
 
-const config = require('./config/config-parser.js');
-// Ship functions
-var shipfunc = require('./service/ShipDataCtrl');
-// EquipmentModel functions
-var equipfunc = require('./service/EquipDataCtrl');
-// DAO functions
-var DbAccess = require('./db/DbAccess');
-// TODO change mongodb to nedb https://github.com/louischatriot/nedb/
-var MongoClient = require('mongodb').MongoClient;
-
+// TODO 如何让nedb在nodejs中持久，不重复创建（现有的static可行吗？）。
+//  并发请求性能测试(基准测试)，是否要在linux服务器中做测试？
 const express = require('express');
 const app = express();
 
-// ====Configurating express application:
-
-// For forcing re-send response rather than 304(Not Modified) when developing
+// Forcing re-send response rather than send 304(Not Modified)(Browser presents cached content)
+//      when developing, for simulation debugging convenient.
 if (process.env.NODE_ENV !== 'production') {
     app.disable('etag');
 }
@@ -26,20 +20,18 @@ if (process.env.NODE_ENV !== 'production') {
 // Enable if you're behind a reverse proxy 
 // (Heroku, Bluemix, AWS ELB, Nginx, etc)
 // see https://expressjs.com/en/guide/behind-proxies.html
-if (config.useProxy) {
+if (config.get('server.use_proxy')) {
     app.set('trust proxy', 1);
 }
 
-// Use helmet module to secure HTTP headers.
-var helmet = require('helmet');
+// Use helmet module to secure HTTP header (by removing unnecessary headers).
 app.use(helmet());
 
+
 // Use express-rate-limit to limit query rate.
-const rateLimit = require("express-rate-limit");
-const {printLog} = require("./util/log");
 const limiter = rateLimit({
-    windowMs: config.expressRateLimit.windowTime, // 30 seconds
-    max: config.expressRateLimit.queryLimit, // limit each IP to 100 requests per windowMs
+    windowMs: config.get('express_rate_limit.window_in_milliseconds'), // 30 seconds
+    max: config.get('express_rate_limit.max_query_number_per_ip_per_window'), // limit each IP to 100 requests per windowMs
     headers: false // do not send headers about express module (helmet module will also delete headers)
 });
 app.use(limiter);
@@ -47,60 +39,37 @@ app.use(limiter);
 // Use express-winston logger module
 app.use(expressWinstonLogger);
 
-// ====Starting server:
+// Load router
+app.use(router);
 
-// Try to connect to mongodb
-MongoClient.connect(config.mongodb, {useNewUrlParser: true},
-    function (err, db) {
-        if (err) {
-            console.error('[src start] Mongodb connect failed!'
-                + '\nBut you can try to launch server first.');
-            console.error(err);
-        } else {
-            console.info('[src start] Mongodb connect success!');
-            db.close();
-        }
-    })
-
-// Start listening port
-app.listen(config.serverPort, config.serverIp, function () {
-    console.info('[src start] Listening on port ' + config.serverPort
-        + '\n[src start] Access it via http://%s:%d',
-        config.serverIp, config.serverPort);
+// Start listening on port
+const serverPort = config.get('server.port');
+const serverIp = config.get('server.ip');
+const serverDomain = config.get('server.domain');
+app.listen(serverPort, serverIp, () => {
+    logger.info(`Listening on port ${serverPort}, ip ${serverIp}.
+    \n Access it via ${serverDomain}.`);
 })
 
-app.get('/', (req, res) => {
-    // Check if src IP is already blocked
-    // console log
-    RootRoute(req, res);
-})
-
-app.get('/v1/ship/info', (async (req, res) => {
-    await ShipInfoRoute(req, res);
-}));
-
-app.get('/v1/ship/cg', (async (req, res) => {
-    await ShipCGRoute(req, res);
-}))
-
-// not public, for v1/ship/cg, 
-// result's image URI can be access via here and get image file.
-app.get('/v1/image/ship', (async (req, res) => {
-    ImageShipRoute(req, res);
-}))
-
-app.get('/v1/equip/info', (async (req, res) => {
-    await EquipInfoRoute(req, res);
-}))
-
-app.get('/v1/equip/cg', (async (req, res) => {
-    await EquipCGRoute(req, res);
-}))
-
-// not public, for v1/equip/cg, 
-// result's image URI can be access via here and get image file.
-app.get('/v1/image/equip', (async (req, res) => {
-    // get paramaters
-    // if paramflag->true, not a valid request
-    ImageEquipRoute(req, res);
-}))
+// TODO unfinished old api below
+// // not public, for v1/ship/cg,
+// // result's image URI can be access via here and get image file.
+// app.get('/v1/image/ship', (async (req, res) => {
+//     ImageShipRoute(req, res);
+// }))
+//
+// app.get('/v1/equip/info', (async (req, res) => {
+//     await EquipInfoRoute(req, res);
+// }))
+//
+// app.get('/v1/equip/cg', (async (req, res) => {
+//     await EquipCGRoute(req, res);
+// }))
+//
+// // not public, for v1/equip/cg,
+// // result's image URI can be access via here and get image file.
+// app.get('/v1/image/equip', (async (req, res) => {
+//     // get paramaters
+//     // if paramflag->true, not a valid request
+//     ImageEquipRoute(req, res);
+// }))

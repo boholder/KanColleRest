@@ -1,4 +1,6 @@
 import {NameModel} from "./name.model.js";
+import {ModelBuildError} from "../util/error.js";
+import {logger} from "../config/winston-logger.js"
 
 /*
 This kind of requirement is very common in this project:
@@ -18,7 +20,7 @@ class SimplifiedFieldEntityModel {
         this.name = new NameModel(name);
     }
 
-    static build(entity){
+    static build(entity) {
         return new SimplifiedFieldEntityModel(entity);
     }
 }
@@ -51,10 +53,17 @@ class FieldEntityArray extends Array {
 
     static async buildModelFromIdArray(idArray = [], dao) {
         let entityArray = [];
-        for (let id of idArray) {
-            // only need one id since their name is same (only suffix is diff).
-            let entity = await dao.getModelBy(id);
-            entityArray.push(entity);
+        try {
+            for (let id of idArray) {
+                // only need one id since their name is same (only suffix is diff).
+                let entity = await dao.getIdNameBy(id);
+                entityArray.push(entity);
+            }
+        } catch (e) {
+            logger.error(
+                new ModelBuildError('FieldEntityArray', e)
+            );
+            return FieldEntityArray.buildModelFromEntityArray();
         }
         return FieldEntityArray.buildModelFromEntityArray(entityArray);
     }

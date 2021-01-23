@@ -3,6 +3,7 @@
 /*
 Both ship & equipment have dismantle operation.
  */
+
 class DismantlementGainModel {
     constructor([fuel, ammo, steel, bauxite] = []) {
         this.fuel = fuel || 0;
@@ -11,7 +12,7 @@ class DismantlementGainModel {
         this.bauxite = bauxite || 0;
     }
 
-    static build(dismantlementArray=[]){
+    static build(dismantlementArray = []) {
         return new DismantlementGainModel(dismantlementArray);
     }
 }

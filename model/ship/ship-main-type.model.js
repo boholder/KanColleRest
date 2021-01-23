@@ -5,6 +5,8 @@ In Kancolle there are 6 main ship types:
  */
 import {NameModel} from "../name.model.js";
 import {FieldEntityArray} from "../simplified-field-entity.model.js";
+import {ModelBuildError} from "../util/error.js";
+import {logger} from "../../config/winston-logger.js";
 
 class ShipMainTypeModel {
     constructor({name, types, id} = {}) {
@@ -14,8 +16,15 @@ class ShipMainTypeModel {
         this.subtype = types || new FieldEntityArray();
     }
 
-    static async build() {
-
+    static async build(type) {
+        try {
+            return new ShipMainTypeModel(type);
+        } catch (e) {
+            logger.error(
+                new ModelBuildError('ShipMainTypeModel', e)
+            );
+            return new ShipMainTypeModel();
+        }
     }
 }
 

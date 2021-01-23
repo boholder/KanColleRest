@@ -7,6 +7,10 @@ class LinkModel {
         this.url = url || '';
     }
 
+    static build(link = {}) {
+        return new LinkModel(link);
+    }
+
     static buildLinkArray(linkArray = []) {
         let array = [];
         for (let link of linkArray) {

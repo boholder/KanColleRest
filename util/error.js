@@ -1,42 +1,97 @@
 class BaseError extends Error {
-    constructor(message, staticMessage) {
-        super(message);
+    constructor(staticMessage, innerError = undefined) {
+        super(staticMessage);
         this.name = "BaseError";
-        this.reason = staticMessage;
+        this.inner = innerError || {
+            toString() {
+                return `no inner error`
+            }
+        };
     }
 
+    /*
+    return '[error name]: [message]: [additionalToString()] inner: [innerError.toString()], stack: [call stack]'
+     */
     toString() {
-        return this.name + ": " + this.reason + ": " + this.message;
+        return `${this.baseToString()} ${this.additionalToString()} 
+                    ${this.innerErrorAndStackToString()}`;
+    }
+
+    baseToString() {
+        return `${this.name}: ${this.message}:`;
+    }
+
+    additionalToString() {
+        return ``;
+    }
+
+    innerErrorAndStackToString() {
+        return `inner: ${this.inner.toString()}, stack: ${this.inner.stack}`;
     }
 }
 
 class DatabaseQueryExecuteError extends BaseError {
-    constructor(databaseName, message) {
-        super(message, "Encounter error when querying database");
+    constructor(databaseName, innerError = undefined) {
+        super("Error occurred when querying database", innerError);
         this.name = 'DatabaseQueryExecuteError';
         this.db = databaseName;
+    }
+
+    additionalToString() {
+        return `db name: ${this.db},`;
     }
 }
 
 class DatabaseQueryFormatError extends BaseError {
-    constructor(id) {
-        super(id, "Invalid id when building query json");
+    constructor(id, innerError = undefined) {
+        super("Invalid id when building query json", innerError);
         this.name = 'DatabaseQueryFormatError';
+        this.invalidId = id;
+    }
+
+    additionalToString() {
+        return `invalid id: ${this.invalidId},`
     }
 }
 
 class ModelBuildError extends BaseError {
-    constructor(modelClassName, message) {
-        super(message, "Building process isn't goes normally");
+    constructor(modelClassName, innerError = undefined) {
+        super("Building process isn't goes normally", innerError);
         this.name = 'ModelBuildError';
         this.model = modelClassName;
     }
 
-    toString() {
-        return this.name + ": " +
-            this.model + " " + this.reason + ": "
-            + this.message;
+    additionalToString() {
+        return `model name: ${this.model},`
     }
 }
 
-export {BaseError, DatabaseQueryExecuteError, DatabaseQueryFormatError, ModelBuildError};
+class DatabaseInitializingError extends BaseError {
+    constructor(wantedDatabaseName, innerError = undefined) {
+        super("Error occurred when initializing database", innerError);
+        this.name = "DatabaseInitializingError";
+        this.wantedDb = wantedDatabaseName;
+    }
+
+    additionalToString() {
+        return `wanted db name: ${this.wantedDb},`
+    }
+}
+
+class ImageSendingError extends BaseError {
+    constructor(imagePath, innerError = undefined) {
+        super('Error occurred when sending a image response', innerError);
+        this.name = 'ImageSendingError';
+        this.imagePath = imagePath;
+    }
+
+    additionalToString() {
+        return `image path: ${this.imagePath},`
+    }
+}
+
+export {
+    BaseError, DatabaseQueryExecuteError,
+    DatabaseQueryFormatError, ModelBuildError,
+    DatabaseInitializingError, ImageSendingError
+};

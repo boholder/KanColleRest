@@ -1,5 +1,7 @@
 import {NameModel} from "./name.model.js";
 import {FieldEntityArray} from "./simplified-field-entity.model.js";
+import {ModelBuildError} from "../util/error.js";
+import {logger} from "../config/winston-logger.js";
 
 class EquipmentTypeModel {
     constructor({
@@ -16,6 +18,15 @@ class EquipmentTypeModel {
         this.equipable_ships = equipable_extra_ship || new FieldEntityArray();
         this.id_in_game = id_ingame || NaN;
         this.transport_point = tp || 0;
+    }
+
+    static async build(equipmentType = {}) {
+        try {
+            return new EquipmentTypeModel(equipmentType);
+        } catch (error) {
+            logger.error(
+                new ModelBuildError('EquipmentTypeModel', error));
+        }
     }
 }
 

@@ -1,9 +1,10 @@
 import config from "config";
-import {RootRouteUtil} from "./root-route.util.js";
+import {BaseRouteUtil} from "./base-route.util.js";
 
 class ShipInfoRouteUtil {
-    static #conFigKey = RootRouteUtil.getConfigKey('ship.ship_info');
-    static url = RootRouteUtil.concatUrlWith('ship', this.#conFigKey);
+    static #conFigKey = BaseRouteUtil.getConfigKey('ship.ship_info');
+    static url = BaseRouteUtil.concatUrlWith('ship', this.#conFigKey);
+    static route = BaseRouteUtil.concatVersionRouteWIth('ship', this.#conFigKey);
     static shipParam = config.get(`${this.#conFigKey}.param.ship`);
     static matchFormatParam = config.get(`${this.#conFigKey}.param.match_format`);
     static matchFormatValues = config.get(`${this.#conFigKey}.param.match_format_values`);
