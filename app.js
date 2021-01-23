@@ -51,26 +51,3 @@ const serverDomain = config.get('server.domain');
 app.listen(serverPort, serverIp, () => {
     logger.info(`Listening on port ${serverPort}, ip ${serverIp}. Access it via ${serverDomain}.`);
 })
-
-// TODO unfinished old api below
-// // not public, for v1/ship/cg,
-// // result's image URI can be access via here and get image file.
-// app.get('/v1/image/ship', (async (req, res) => {
-//     ImageShipRoute(req, res);
-// }))
-//
-// app.get('/v1/equip/info', (async (req, res) => {
-//     await EquipInfoRoute(req, res);
-// }))
-//
-// app.get('/v1/equip/cg', (async (req, res) => {
-//     await EquipCGRoute(req, res);
-// }))
-//
-// // not public, for v1/equip/cg,
-// // result's image URI can be access via here and get image file.
-// app.get('/v1/image/equip', (async (req, res) => {
-//     // get paramaters
-//     // if paramflag->true, not a valid request
-//     ImageEquipRoute(req, res);
-// }))

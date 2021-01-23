@@ -3,14 +3,6 @@ import {logger} from "../config/winston-logger.js";
 import {ImageSendingError} from "../util/error.js";
 
 class ResponseSender {
-    static sendStateJson(res, code, msg, dataArray) {
-        let body = {
-            "code": code,
-            "message": msg,
-            "result": dataArray
-        };
-        this.sendJson(res, body);
-    }
 
     static sendJson(res, data) {
         res.json(data);
@@ -23,15 +15,31 @@ class ResponseSender {
             res.end(image, 'binary');
         } catch (error) {
             logger.error(new ImageSendingError(imagePath, error).toString());
-            this.send404(res);
+            status()(res);
         }
     }
 
-    static send404(res) {
+    static send404NotFound(res) {
         res.status(404).send(
-            '"Sorry, we cannot find appropriate response!"x\n' +
+            'Sorry, we cannot find appropriate response!\n' +
             '\t\t\\\n' +
-            '_____cat____kowtowing-girl______');
+            '_____cat____prostrating-girl______');
+    }
+
+    static send204NoContent(res) {
+        res.status(204).end();
+    }
+
+    static send409Conflict(res, explainMessage) {
+        res.status(409).send(explainMessage);
+    }
+
+    static send500InternalServerError(res) {
+        res.status(500).end(
+            'Internal server error happened, ' +
+            'tell the server administrator to check log or ' +
+            'report it as an issue on project issue page: ' +
+            'https://github.com/boholder/KanColleREST/issues');
     }
 }
 

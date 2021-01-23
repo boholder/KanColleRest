@@ -62,7 +62,7 @@ const expressWinstonLogger = expressWinston.logger({
         winston.format.json()
     ),
     meta: false, // optional: control whether you want to log the meta data about the request (default to true)
-    msg: "From {{req.ip}}: {{req.method}} {{res.statusCode}} {{req.originalUrl}} {{res.responseTime}}ms",
+    msg: "From {{req.ip}}: {{req.method}} {{req.originalUrl}} {{res.statusCode}} {{res.responseTime}}ms",
     colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
     transports: [
         new winston.transports.File({
