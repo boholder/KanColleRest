@@ -14,8 +14,7 @@ It used to be a util class,
     and writing error handling code in getOneByIdAndHandleError method.
 Decorator mode is ideal,
     but I don't want to manually add decorator wrapper every time I use dao.
-BaseModel is also based on the same considerations,
-    this approach is very tempting, and I am not sure if this is correct (in JavaScript language).
+This approach is very tempting, and I am not sure if this is correct (in JavaScript language).
  */
 class BaseDao {
     static datastore = null;
@@ -26,7 +25,8 @@ class BaseDao {
                 this.buildDbCreationOptionWith(dbFileName)
             );
         } catch (error) {
-            logger.error('', new DatabaseInitializingError(dbFileName, error));
+            logger.error(
+                new DatabaseInitializingError(dbFileName, error).toString());
         }
     }
 
@@ -48,7 +48,10 @@ class BaseDao {
         } else {
             let result = await this.datastore.findOne({id: id}, projection).catch(
                 reason => {
-                    logger.error('', new DatabaseQueryExecuteError(this.#getDbNameFrom(this.datastore), reason));
+                    logger.error(
+                        new DatabaseQueryExecuteError(
+                            this.#getDbNameFrom(this.datastore),
+                            new Error(reason)).toString());
                 });
             return result || {};
         }

@@ -34,6 +34,9 @@
       "mian_image_dir": "E:\\code\\javascript\\KanColleREST\\data\\image\\mian_pics"
     }
   },
+  "log": {
+    "log_directory": "E:\\code\\javascript\\KanColleREST\\data\\log"
+  },
   "api": {
     "current_version": "v1",
     "v1": {
@@ -57,7 +60,17 @@
               "json",
               "img"
             ]
-          }
+          },
+          "message_code": [
+            {
+              "code": 600,
+              "message": "Response only contains one ship girl's data."
+            },
+            {
+              "code": 601,
+              "message": "You sent a fuzzy matching condition, so response contains more than one ship girl's data."
+            }
+          ]
         },
         "ship_cg": {
           "route": "cg",

@@ -38,7 +38,7 @@ class ShipCgModel {
             return await this.buildModel(ship);
         } catch (e) {
             logger.error(
-                new ModelBuildError('ShipCgModel', e)
+                new ModelBuildError('ShipCgModel', e).toString()
             );
             return new ShipCgModel(ship);
         }

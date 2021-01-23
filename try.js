@@ -1,5 +1,3 @@
-import {CreatorModel} from "./model/creator.model.js";
-import {mockedCreator} from "./model/example-model-instances.js";
-
-let c = await mockedCreator;
-console.log(c);
+import {expressWinstonLogger} from "./config/winston-logger.js";
+let logger = expressWinstonLogger;
+console.log(logger);

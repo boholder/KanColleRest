@@ -30,24 +30,27 @@ class BaseRouteUtil {
 
     /*
     return http://[domain]/[api version]/[urlPrefix]/[config.get(apiConfigKey.route)]
+    example: http://example.com/v1/ship/info
      */
     static concatUrlWith(urlPrefix, apiConfigKey) {
         let route = config.get(`${apiConfigKey}.route`);
-        return BaseRouteUtil.concatVersionUrlWith(`${urlPrefix}/${route}`);
+        return BaseRouteUtil.#concatVersionUrlWith(`${urlPrefix}/${route}`);
     }
 
     /*
     return http://[domain]/[api version]/[apiPart]
      */
-    static concatVersionUrlWith(apiPart) {
+    static #concatVersionUrlWith(apiPart) {
         return `${this.#versionUrl}/${apiPart}`;
     }
 
     /*
-    return: /[api version]/[api part] for router routing
+    return: /[api version]/[urlPrefix]/[config.get(apiConfigKey.route)] for router routing
+    example: /v1/ship/info
      */
-    static concatVersionRouteWIth(apiPart) {
-        return `/${this.#apiVersion}/${apiPart}`;
+    static concatVersionRouteWIth(urlPrefix, apiConfigKey) {
+        let route = config.get(`${apiConfigKey}.route`);
+        return `/${this.#apiVersion}/${urlPrefix}/${route}`;
     }
 }
 

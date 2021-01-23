@@ -1,33 +1,38 @@
 import fs from "fs";
-import {logger} from "../config/winston-logger";
-import {ImageSendingError} from "../util/error";
+import {logger} from "../config/winston-logger.js";
+import {ImageSendingError} from "../util/error.js";
 
 class ResponseSender {
-    static sendOkJson(res, data) {
-        res.writeHead(200, {
-            'Content-Type': 'application/json;charset=utf-8'
-        });
-        res.end(JSON.stringify(data, null, "  "));
+    static sendStateJson(res, code, msg, dataArray) {
+        let body = {
+            "code": code,
+            "message": msg,
+            "result": dataArray
+        };
+        this.sendJson(res, body);
     }
 
-    static trySendPng(res, imagePath) {
+    static sendJson(res, data) {
+        res.json(data);
+    }
+
+    static tryToSendPng(res, imagePath) {
         try {
             let image = fs.readFileSync(imagePath);
-            res.writeHead(200, {'Content-Type': 'image/png'});
+            res.status(200).set({'Content-Type': 'image/png'});
             res.end(image, 'binary');
         } catch (error) {
-            logger.error('', new ImageSendingError(imagePath, error));
+            logger.error(new ImageSendingError(imagePath, error).toString());
+            this.send404(res);
         }
     }
 
-    // TODO unfinished
-    makeJsonResponse(code, msg, ObjArray, res) {
-        var response = {
-            "code": code,
-            "message": msg,
-            "result": ObjArray
-        };
-        resHead200Json(res, response);
-        return response;
+    static send404(res) {
+        res.status(404).send(
+            '"Sorry, we cannot find appropriate response!"x\n' +
+            '\t\t\\\n' +
+            '_____cat____kowtowing-girl______');
     }
 }
+
+export {ResponseSender};

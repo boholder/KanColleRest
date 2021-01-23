@@ -22,7 +22,7 @@ class ShipTypeModel {
             return await this.buildModel(shipType);
         } catch (e) {
             logger.error(
-                new ModelBuildError('ShipTypeModel', e)
+                new ModelBuildError('ShipTypeModel', e).toString()
             );
             return new ShipTypeModel(shipType);
         }

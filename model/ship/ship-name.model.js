@@ -44,7 +44,7 @@ class ShipNameModel extends NameModel {
                     return await this.buildModel(shipName);
         }catch (e) {
             logger.error(
-                new ModelBuildError('ShipNameModel', e)
+                new ModelBuildError('ShipNameModel', e).toString()
             );
             return new ShipNameModel();
         }

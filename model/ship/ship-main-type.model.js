@@ -21,7 +21,7 @@ class ShipMainTypeModel {
             return new ShipMainTypeModel(type);
         } catch (e) {
             logger.error(
-                new ModelBuildError('ShipMainTypeModel', e)
+                new ModelBuildError('ShipMainTypeModel', e).toString()
             );
             return new ShipMainTypeModel();
         }

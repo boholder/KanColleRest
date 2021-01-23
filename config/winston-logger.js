@@ -1,5 +1,13 @@
+import config from 'config'
 import winston from 'winston';
 import expressWinston from 'express-winston';
+import fs from "fs";
+
+const logDirectory = config.get('log.log_directory')
+// create directory if it isn't exists
+if (!fs.existsSync(logDirectory)) {
+    fs.mkdirSync(logDirectory);
+}
 
 // https://github.com/winstonjs/winston
 const logger = winston.createLogger({
@@ -17,14 +25,14 @@ const logger = winston.createLogger({
         // - Write all logs error (and below) to `kcrest-error.log`.
         //
         new winston.transports.File({
-            filename: '../data/log/kcrest-error.log',
+            filename: `${logDirectory}/kcrest-core-error.log`,
             level: 'error',
             maxsize: 10240,
             maxFiles: 2,
             tailable: true
         }),
         new winston.transports.File({
-            filename: '../data/log/kcrest-combined.log',
+            filename: `${logDirectory}/kcrest-core-combined.log`,
             level: 'info',
             maxsize: 10240,
             maxFiles: 2,
@@ -35,13 +43,32 @@ const logger = winston.createLogger({
 // To avoid logger exit after record an unhandled exception.
 logger.exitOnError = false;
 
+if (process.env.NODE_ENV !== 'production') {
+    logger.add(new winston.transports.Console({
+        format: winston.format.combine(
+            winston.format.colorize(),
+            winston.format.simple()
+        )
+    }));
+}
+
 // https://github.com/bithavoc/express-winston
 const expressWinstonLogger = expressWinston.logger({
+    format: winston.format.combine(
+        winston.format.timestamp({
+            format: 'YYYY-MM-DD HH:mm:ss'
+        }),
+        winston.format.errors({stack: true}),
+        winston.format.json()
+    ),
+    meta: false, // optional: control whether you want to log the meta data about the request (default to true)
+    msg: "From {{req.ip}}: {{req.method}} {{res.statusCode}} {{req.originalUrl}} {{res.responseTime}}ms",
+    colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
     transports: [
         new winston.transports.File({
-            filename: '../data/log/kcrest-express-request.log',
+            filename: `${logDirectory}/kcrest-express-request.log`,
             level: 'info',
-            maxsize: 1024,
+            maxsize: 10240,
             maxFiles: 2,
             tailable: true
         }),
@@ -51,26 +78,7 @@ const expressWinstonLogger = expressWinston.logger({
                 winston.format.simple()
             )
         })
-    ],
-    format: winston.format.combine(
-        winston.format.json()
-    ),
-    meta: true, // optional: control whether you want to log the meta data about the request (default to true)
-    msg: "From {req.ip}: {{req.method}} [HTTP {{res.statusCode}}] {{req.originalUrl}} {{res.responseTime}}ms", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
-    expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
-    colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
-    ignoreRoute: function (req, res) {
-        return false;
-    } // optional: allows to skip some log messages based on request and/or response
+    ]
 })
-
-if (process.env.NODE_ENV !== 'production') {
-    logger.add(new winston.transports.Console({
-        format: winston.format.combine(
-            winston.format.colorize(),
-            winston.format.simple()
-        )
-    }));
-}
 
 export {logger, expressWinstonLogger};

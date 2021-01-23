@@ -61,7 +61,7 @@ class FieldEntityArray extends Array {
             }
         } catch (e) {
             logger.error(
-                new ModelBuildError('FieldEntityArray', e)
+                new ModelBuildError('FieldEntityArray', e).toString()
             );
             return FieldEntityArray.buildModelFromEntityArray();
         }

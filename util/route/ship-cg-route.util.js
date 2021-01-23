@@ -5,6 +5,7 @@ class ShipCgRouteUtil {
     static #conFigKey = BaseRouteUtil.getConfigKey('ship.ship_cg');
     static route = BaseRouteUtil.concatVersionRouteWIth('ship', this.#conFigKey);
     static url = BaseRouteUtil.concatUrlWith('ship', this.#conFigKey);
+
     static shipIdParam = config.get(`${this.#conFigKey}.param.ship_id`);
     static cgIdParam = config.get(`${this.#conFigKey}.param.cg_id`);
 

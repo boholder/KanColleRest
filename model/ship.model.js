@@ -52,7 +52,7 @@ class ShipModel {
             return this.#buildModel(ship);
         } catch (e) {
             logger.error(
-                new ModelBuildError('ShipModel', e)
+                new ModelBuildError('ShipModel', e).toString()
             );
             return new ShipModel(ship);
         }
