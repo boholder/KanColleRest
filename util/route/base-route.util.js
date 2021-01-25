@@ -2,8 +2,8 @@ import config from 'config'
 
 class BaseRouteUtil {
     static #apiVersion = config.get('api.current_version');
-    static #rootUrl = this.getRootUrl();
-    static #versionUrl = `${this.#rootUrl}/${this.#apiVersion}`;
+    static rootUrl = this.getRootUrl();
+    static #versionUrl = `${this.rootUrl}/${this.#apiVersion}`;
 
     /*
     return: http://[domain]

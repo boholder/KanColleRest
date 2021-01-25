@@ -1,6 +1,6 @@
-import {CreatorModel} from "../creator.model.js";
-import {ModelBuildError} from "../util/error.js";
+import {ModelBuildError} from "../../util/error.js";
 import {logger} from "../../config/winston-logger.js";
+import {CreatorDao} from "../../db/dao/creator.dao.js";
 
 class CreatorsModel {
     constructor({cv, illustrator} = {}) {
@@ -10,19 +10,23 @@ class CreatorsModel {
 
     static async build(creators = {}) {
         try {
-            return this.buildModel(creators);
+            return await this.#buildModel(creators);
         } catch (e) {
             logger.error(
-                new ModelBuildError('CreatorsModel', e)
+                new ModelBuildError('CreatorsModel', e).toString()
             );
             return new CreatorsModel(creators);
         }
     }
 
-    static buildModel(creators) {
-        creators.cv = CreatorModel.buildModel(creators.cv);
-        creators.illustrator = CreatorModel.buildModel(creators.illustrator);
-        return new CreatorModel(creators);
+    static async #buildModel(creators) {
+        if (typeof creators.cv === 'number') {
+            creators.cv = await CreatorDao.getIdNameBy(creators.cv);
+        }
+        if (typeof creators.illustrator === 'number') {
+            creators.illustrator = await CreatorDao.getIdNameBy(creators.illustrator);
+        }
+        return new CreatorsModel(creators);
     }
 }
 

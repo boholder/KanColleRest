@@ -6,11 +6,18 @@ class ShipDao extends BaseDao {
     static #callInit = super.initDatastoreWith(DB_FILE_NAME.ship);
 
     static async getModelBy(id) {
-        return ShipModel.build(await super.getOneByIdAndHandleError(id, {_id: 0}));
+        return ShipModel.build(
+            await super.getOneById(id, {_id: 0}));
+    }
+
+    static async getModelsByQuery(query){
+        return await ShipModel.buildModelArrayFrom(
+            await super.getManyByQuery(query, {_id: 0}));
     }
 
     static async getIdNameBy(id) {
-        return SimplifiedFieldEntityModel.build(await super.getOneByIdAndHandleError(id, {name: 1, id: 1}));
+        return SimplifiedFieldEntityModel.build(
+            await super.getOneById(id, {name: 1, id: 1}));
     }
 }
 

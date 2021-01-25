@@ -41,9 +41,15 @@ class FieldEntityArray extends Array {
         for (let entity of fieldEntityArray) {
             this.id.push(entity.id);
             let entityName = entity.name;
-            this.name.ja_jp.push(entityName.ja_jp);
-            this.name.en_us.push(entityName.en_us);
-            this.name.zh_cn.push(entityName.zh_cn);
+            if(entityName){
+                this.name.ja_jp.push(entityName.ja_jp);
+                this.name.en_us.push(entityName.en_us);
+                this.name.zh_cn.push(entityName.zh_cn);
+            }else{
+                this.name.ja_jp.push('');
+                this.name.en_us.push('');
+                this.name.zh_cn.push('');
+            }
         }
     }
 

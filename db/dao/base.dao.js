@@ -41,23 +41,47 @@ class BaseDao {
         return `${DB_FILE_DIR}/${dbFileName}${FILE_SUFFIX}`;
     }
 
-    static async getOneByIdAndHandleError(id, projection = {}) {
-        if (!id) {
-            logger.warn(new DatabaseQueryFormatError(id));
-            return {};
+    static async getOneById(id, projection = {}) {
+        if (id) {
+            return await this.findOne(id, projection);
         } else {
-            let result = await this.datastore.findOne({id: id}, projection).catch(
-                reason => {
-                    logger.error(
-                        new DatabaseQueryExecuteError(
-                            this.#getDbNameFrom(this.datastore),
-                            new Error(reason)).toString());
-                });
-            return result || {};
+            logger.warn(new DatabaseQueryFormatError(id).toString());
+            return {};
         }
     }
 
-    static #getDbNameFrom(datastore) {
+    static async findOne(id, projection) {
+        // TODO check error handle when missing db file
+        return this.datastore.findOne({id: id}, projection).then(
+            value => {
+                if (value) {
+                    return value;
+                } else {
+                    // query id isn't in db, value is null
+                    this.rejectWithError(id);
+                }
+            }, reason => {
+                // something bad happened inside nedb
+                logger.error(
+                    this.buildDatabaseQueryExecuteError(
+                        new Error(reason).toString()));
+            });
+    }
+
+    static rejectWithError(query) {
+        let error = this.buildDatabaseQueryExecuteError(
+            new DatabaseQueryFormatError(query));
+        logger.warn(error.toString());
+        throw error;
+    }
+
+    static buildDatabaseQueryExecuteError(innerError) {
+        return new DatabaseQueryExecuteError(
+            this.getDbNameFrom(this.datastore),
+            innerError);
+    }
+
+    static getDbNameFrom(datastore) {
         if (datastore) {
             let dbFilePath = datastore.__original.filename;
             let regex = /([a-z]+).nedb/;
@@ -65,6 +89,30 @@ class BaseDao {
         } else {
             return 'corrupted_database';
         }
+    }
+
+    static async getManyByQuery(query, projection = {}) {
+        if (query) {
+            return await this.findMany(query, projection);
+        } else {
+            logger.warn(new DatabaseQueryFormatError(query).toString());
+            return [];
+        }
+    }
+
+    static async findMany(query, projection) {
+        return this.datastore.find(query, projection).then(
+            value => {
+                if (value) {
+                    return value;
+                } else {
+                    this.rejectWithError(query);
+                }
+            }, reason => {
+                logger.error(
+                    this.buildDatabaseQueryExecuteError(
+                        new Error(reason).toString()));
+            });
     }
 }
 

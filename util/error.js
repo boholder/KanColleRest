@@ -26,7 +26,7 @@ class BaseError extends Error {
     }
 
     innerErrorAndStackToString() {
-        return `inner: ${this.inner.toString()}, stack: ${this.inner.stack}`;
+        return `inner: ${this.inner.toString()}, stack: ${this.inner.stack || this.stack}`;
     }
 }
 
@@ -43,14 +43,14 @@ class DatabaseQueryExecuteError extends BaseError {
 }
 
 class DatabaseQueryFormatError extends BaseError {
-    constructor(id, innerError = undefined) {
-        super("Invalid id when building query json", innerError);
+    constructor(query, innerError = undefined) {
+        super("Invalid query when building query json", innerError);
         this.name = 'DatabaseQueryFormatError';
-        this.invalidId = id;
+        this.invalidQuery = query;
     }
 
     additionalToString() {
-        return `invalid id: ${this.invalidId},`
+        return `query(or id): ${this.invalidQuery},`
     }
 }
 

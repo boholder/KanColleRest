@@ -5,7 +5,7 @@ In Kancolle there are 6 main ship types:
  */
 import {NameModel} from "../name.model.js";
 import {FieldEntityArray} from "../simplified-field-entity.model.js";
-import {ModelBuildError} from "../util/error.js";
+import {ModelBuildError} from "../../util/error.js";
 import {logger} from "../../config/winston-logger.js";
 
 class ShipMainTypeModel {

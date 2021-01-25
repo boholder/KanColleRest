@@ -7,12 +7,12 @@ class EquipmentTypeDao extends BaseDao {
 
     static async getModelBy(id) {
         return EquipmentModel.build(
-            await super.getOneByIdAndHandleError(id, {_id: 0}));
+            await super.getOneById(id, {_id: 0}));
     }
 
     static async getIdNameBy(id) {
         return SimplifiedFieldEntityModel.build(
-            await super.getOneByIdAndHandleError(id, {id: 1, name: 1}));
+            await super.getOneById(id, {id: 1, name: 1}));
     }
 }
 

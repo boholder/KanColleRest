@@ -1,6 +1,6 @@
 import {ShipCgRouteUtil} from "../../util/route/ship-cg-route.util.js";
 import {ShipSeasonalCgModel} from "./ship-seasonal-cg.model.js";
-import {ModelBuildError} from "../util/error.js";
+import {ModelBuildError} from "../../util/error.js";
 import {logger} from "../../config/winston-logger.js";
 
 /*
@@ -35,7 +35,7 @@ class ShipCgModel {
 
     static async build(ship = {}) {
         try {
-            return await this.buildModel(ship);
+            return await this.#buildModel(ship);
         } catch (e) {
             logger.error(
                 new ModelBuildError('ShipCgModel', e).toString()
@@ -44,7 +44,7 @@ class ShipCgModel {
         }
     }
 
-    static async buildModel(ship) {
+    static async #buildModel(ship) {
         if (ship.illust_extra) {
             ship.illust_extra = await ShipSeasonalCgModel.buildModelArrayFromShip(ship);
         }

@@ -4,7 +4,7 @@ import {ImageSendingError} from "../util/error.js";
 
 class ResponseSender {
 
-    static sendJson(res, data) {
+    static sendJson(res, data = '') {
         res.json(data);
     }
 
@@ -15,8 +15,21 @@ class ResponseSender {
             res.end(image, 'binary');
         } catch (error) {
             logger.error(new ImageSendingError(imagePath, error).toString());
-            status()(res);
+            this.send404NotFound(res);
         }
+    }
+
+    static send204NoContent(res) {
+        res.status(204).end();
+    }
+
+    static send400WhenRequestParamValueIllegal(res, ...illegalParamPairs) {
+        let explanation = `Unsupported parameter value at: ${illegalParamPairs}`;
+        this.send400BadRequest(res, explanation);
+    }
+
+    static send400BadRequest(res, explanation) {
+        res.status(400).send(explanation);
     }
 
     static send404NotFound(res) {
@@ -26,20 +39,16 @@ class ResponseSender {
             '_____cat____prostrating-girl______');
     }
 
-    static send204NoContent(res) {
-        res.status(204).end();
-    }
-
-    static send409Conflict(res, explainMessage) {
-        res.status(409).send(explainMessage);
+    static send409Conflict(res, explanation) {
+        res.status(409).send(explanation);
     }
 
     static send500InternalServerError(res) {
-        res.status(500).end(
+        res.status(500).send(
             'Internal server error happened, ' +
             'tell the server administrator to check log or ' +
             'report it as an issue on project issue page: ' +
-            'https://github.com/boholder/KanColleREST/issues');
+            '[https://github.com/boholder/KanColleREST/issues]');
     }
 }
 

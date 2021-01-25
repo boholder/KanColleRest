@@ -9,7 +9,7 @@ test('mocked object dose not have raw id', () => {
 });
 
 test('leak of value input handle', () => {
-    return CreatorModel.buildModel().then((actual) => {
+    return CreatorModel.build().then((actual) => {
         expect(actual.profession).toBe('');
         expect(actual.name.zh_cn).toBe('');
         expect(actual.relative_ships).toBeInstanceOf(Array);

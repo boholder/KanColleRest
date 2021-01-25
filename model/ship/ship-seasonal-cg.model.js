@@ -1,7 +1,7 @@
 import {ShipSeasonalCgTypeDao} from "../../db/dao/ship-seasonal-cg-type.dao.js";
 import {ShipSeasonalCgDao} from "../../db/dao/ship-seasonal-cg.dao.js";
 import {ShipCgRouteUtil} from "../../util/route/ship-cg-route.util.js";
-import {ModelBuildError} from "../util/error.js";
+import {ModelBuildError} from "../../util/error.js";
 import {logger} from "../../config/winston-logger.js";
 
 class ShipSeasonalCgModel {
@@ -15,16 +15,16 @@ class ShipSeasonalCgModel {
 
     static async build(cg = {}) {
         try {
-            return await this.buildModel(cg);
+            return await this.#buildModel(cg);
         } catch (e) {
             logger.error(
-                new ModelBuildError('ShipSeasonalCgModel', e)
+                new ModelBuildError('ShipSeasonalCgModel', e).toString()
             );
             return new ShipSeasonalCgModel(cg);
         }
     }
 
-    static async buildModel(cg) {
+    static async #buildModel(cg) {
         cg.type = await ShipSeasonalCgTypeDao.getModelBy(cg.type);
         return new ShipSeasonalCgModel(cg);
     }

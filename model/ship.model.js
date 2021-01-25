@@ -13,9 +13,9 @@ import {CapabilitiesModel} from "./ship/ship-capabilities.model.js";
 import {ShipCgModel} from "./ship/ship-cg.model.js";
 import {ShipTypeDao} from "../db/dao/ship-type.dao.js";
 import {ShipClassDao} from "../db/dao/ship-class.dao.js";
-import {CreatorDao} from "../db/dao/creator.dao.js";
 import {ModelBuildError} from "../util/error.js";
 import {logger} from "../config/winston-logger.js";
+import {CreatorsModel} from "./ship/ship-creators.model.js";
 
 /*
 It contains one ship girl's information of one model's information.
@@ -42,9 +42,18 @@ class ShipModel {
         this.modernization_provides = ShipModernizationModel.build(ship.modernization);
         this.remodel = RemodelModel.build(ship.remodel, ship.remodel_cost);
         this.additinal_item_types = ship.additinal_item_types;
-        this.links = LinkModel.buildLinkArray(ship.links);
         this.special_capabilities = CapabilitiesModel.build(ship.capabilities);
+        this.links = LinkModel.buildLinkArray(ship.links);
+        this.relations = ship.rels;
         this.cg = ship.cg;
+    }
+
+    static async buildModelArrayFrom(queryResultArray = []) {
+        let result = [];
+        for (let ship of queryResultArray) {
+            result.push(await this.build(ship));
+        }
+        return result;
     }
 
     static async build(ship = {}) {
@@ -59,28 +68,29 @@ class ShipModel {
     }
 
     static async #buildModel(ship = {}) {
+        // TODO change field models to simple format
         ship.name = await ShipNameModel.build(ship.name);
         // TODO query rare nedb when PR rare db file to WCTF-DB project
         // ship.rare = await ShipRareModel.build(ship.rare);
-        ship.type = await ShipTypeDao.getModelBy(ship.type);
-        ship.class = await ShipClassDao.getModelBy(ship.class);
-        ship.equip = await this.#queryInitEquipsInfoAndBuildArray(ship.equip);
+        ship.type = await ShipTypeDao.getIdNameBy(ship.type);
+        ship.class = await ShipClassDao.getIdNameBy(ship.class);
+        ship.equip = await this.#getInitEquipsInfoInArray(ship.equip);
         ship.additinal_item_types = await
             FieldEntityArray.buildModelFromIdArray(ship.additional_item_types, EquipmentTypeDao);
-        ship.rels = await CreatorDao.getModelBy(ship.rels);
+        ship.rels = await CreatorsModel.build(ship.rels);
         ship.cg = await ShipCgModel.build(ship);
         return new ShipModel(ship);
     }
 
-    static async #queryInitEquipsInfoAndBuildArray(equips) {
+    static async #getInitEquipsInfoInArray(equips) {
         let result = [];
         for (let equip of equips) {
-            result.push(await this.#queryEquipNameFromDbAndBuildModel(equip));
+            result.push(await this.#queryEquipIdNameFromDb(equip));
         }
         return result;
     }
 
-    static async #queryEquipNameFromDbAndBuildModel(equip = {}) {
+    static async #queryEquipIdNameFromDb(equip = {}) {
         if (equip instanceof Object) {
             let result = await EquipmentDao.getIdNameBy(equip.id);
             result.improvement_star = equip.star;

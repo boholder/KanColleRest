@@ -6,7 +6,7 @@ class ShipNameSuffixDao extends BaseDao {
 
     static async getModelBy(id) {
         // not map to model, only ShipNameModel use it.
-        return ShipNameSuffixModel.build(await super.getOneByIdAndHandleError(id, {_id: 0}));
+        return ShipNameSuffixModel.build(await super.getOneById(id, {_id: 0}));
     }
 }
 

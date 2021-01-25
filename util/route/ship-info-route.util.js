@@ -11,8 +11,6 @@ class ShipInfoRouteUtil {
     static matchFormatValues = config.get(`${this.#conFigKey}.param.match_format_values`);
     static responseFormatParam = config.get(`${this.#conFigKey}.param.response_format`);
     static responseFormatValues = config.get(`${this.#conFigKey}.param.response_format_values`);
-
-    static
 }
 
 export {ShipInfoRouteUtil};

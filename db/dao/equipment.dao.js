@@ -6,11 +6,11 @@ class EquipmentDao extends BaseDao {
     static #callInit = super.initDatastoreWith(DB_FILE_NAME.equipment);
 
     static async getModelBy(id) {
-        return EquipmentModel.build(await super.getOneByIdAndHandleError(id, {_id: 0}));
+        return EquipmentModel.build(await super.getOneById(id, {_id: 0}));
     }
 
     static async getIdNameBy(id) {
-        return SimplifiedFieldEntityModel.build(await super.getOneByIdAndHandleError(id, {name: 1, id: 1}));
+        return SimplifiedFieldEntityModel.build(await super.getOneById(id, {name: 1, id: 1}));
     }
 }
 

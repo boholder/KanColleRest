@@ -1,6 +1,6 @@
 import {ShipNameSuffixDao} from "../../db/dao/ship-name-suffix.dao.js";
 import {NameModel} from "../name.model.js";
-import {ModelBuildError} from "../util/error.js";
+import {ModelBuildError} from "../../util/error.js";
 import {logger} from "../../config/winston-logger.js";
 
 /*
@@ -41,7 +41,7 @@ class ShipNameModel extends NameModel {
 
     static async build(shipName = {}) {
         try {
-                    return await this.buildModel(shipName);
+                    return await this.#buildModel(shipName);
         }catch (e) {
             logger.error(
                 new ModelBuildError('ShipNameModel', e).toString()
@@ -50,7 +50,7 @@ class ShipNameModel extends NameModel {
         }
     }
 
-    static async buildModel(shipName) {
+    static async #buildModel(shipName) {
         if (shipName.suffix) {
             shipName.suffix = await ShipNameSuffixDao.getModelBy(shipName.suffix);
         }

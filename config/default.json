@@ -50,6 +50,7 @@
             "ship": "ship",
             "match_format": "matchfmt",
             "match_format_values": [
+              "id",
               "ja_kana",
               "ja_jp",
               "en_us",

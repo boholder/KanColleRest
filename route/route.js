@@ -4,7 +4,8 @@ import express from "express";
 import {ShipInfoRouteUtil} from "../util/route/ship-info-route.util.js";
 import {ShipCgRouteUtil} from "../util/route/ship-cg-route.util.js";
 import {RootController} from "./controller/root.controller.js";
-import {ShipController} from "./controller/ship.controller.js";
+import {ShipInfoController} from "./controller/ship-info.controller.js";
+import {ShipCgController} from "./controller/ship-cg.controller.js";
 
 const router = express.Router();
 
@@ -13,11 +14,11 @@ router.get('/', (req, res) => {
 })
 
 router.get(ShipInfoRouteUtil.route, async (req, res) => {
-    await ShipController.getInfo(req, res);
+    await ShipInfoController.getInfo(req, res);
 });
 
 router.get(ShipCgRouteUtil.route, async (req, res) => {
-    await ShipController.getCg(req, res);
+    await ShipCgController.getCg(req, res);
 });
 
 // TODO unfinished old api below

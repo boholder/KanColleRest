@@ -12,8 +12,7 @@
   "scripts": {
     "test": "jest ./test",
     "test_model": "jest ./test/model",
-    "dev": "nodemon --inspect app.js",
-    "dbg": "node --inspect app.js"
+    "dbg": "nodemon app.js"
   },
   "dependencies": {
     "config": "^3.3.3",

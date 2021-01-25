@@ -5,7 +5,7 @@ class ShipSeasonalCgTypeDao extends BaseDao {
     static #callInit = super.initDatastoreWith(DB_FILE_NAME.seasonal_cg_type);
 
     static async getModelBy(id) {
-        return ShipSeasonalCgTypeModel.build(await super.getOneByIdAndHandleError(id, {_id: 0}));
+        return ShipSeasonalCgTypeModel.build(await super.getOneById(id, {_id: 0}));
     }
 }
 

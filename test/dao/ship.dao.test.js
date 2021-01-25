@@ -1,13 +1,14 @@
 import {ShipDao} from "../../db/dao/ship.dao.js";
+import {DatabaseQueryExecuteError} from "../../util/error";
 
-test('handle db query encounter error', () => {
-    return ShipDao.getModelBy(-1).then(value => {
-        expect(value).toBeTruthy();
-    })
+test('query db with invalid id will throw DatabaseQueryExecuteError error', async () => {
+    await expect(ShipDao.getModelBy(-1))
+        .rejects
+        .toThrowError(DatabaseQueryExecuteError);
 });
 
 test('query db and print one instance', () => {
-    return ShipDao.getModelBy(1).then(value => {
+    return ShipDao.getModelBy(2).then(value => {
         console.log(value);
     });
 });

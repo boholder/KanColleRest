@@ -1,7 +1,7 @@
 import {NameModel} from "../name.model.js";
 import {FieldEntityArray} from "../simplified-field-entity.model.js";
 import {EquipmentDao} from "../../db/dao/equipment.dao.js";
-import {ModelBuildError} from "../util/error.js";
+import {ModelBuildError} from "../../util/error.js";
 import {logger} from "../../config/winston-logger.js";
 
 /*
@@ -19,7 +19,7 @@ class ShipTypeModel {
 
     static async build(shipType = {}) {
         try {
-            return await this.buildModel(shipType);
+            return await this.#buildModel(shipType);
         } catch (e) {
             logger.error(
                 new ModelBuildError('ShipTypeModel', e).toString()
@@ -28,7 +28,7 @@ class ShipTypeModel {
         }
     }
 
-    static async buildModel(shipType) {
+    static async #buildModel(shipType) {
         shipType.equipable = await this.getEquipIdNameFromDbBy(shipType.equipable);
         return new ShipTypeModel(shipType);
     }
