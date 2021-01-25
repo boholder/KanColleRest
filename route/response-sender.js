@@ -8,13 +8,29 @@ class ResponseSender {
         res.json(data);
     }
 
-    static tryToSendPng(res, imagePath) {
+    static sendPngOr404(res, imagePath) {
         try {
             let image = fs.readFileSync(imagePath);
             res.status(200).set({'Content-Type': 'image/png'});
             res.end(image, 'binary');
         } catch (error) {
             logger.error(new ImageSendingError(imagePath, error).toString());
+            this.send404NotFound(res);
+        }
+    }
+
+    /*
+    Mian's screen shot resource won't be updated since I can't contact with her,
+        but providing a API to assess old resource still make sense.
+    When trying to search and send images in mian's resource,
+        ignore error log since it happens frequently.
+     */
+    static sendPngOr404DontLogError(res, imagePath) {
+        try {
+            let image = fs.readFileSync(imagePath);
+            res.status(200).set({'Content-Type': 'image/png'});
+            res.end(image, 'binary');
+        } catch (error) {
             this.send404NotFound(res);
         }
     }

@@ -12,6 +12,7 @@ class ShipCgModel {
         this.normal = this.#concatNormalCgUrls();
         delete this.ship_id;
         this.seasonal = illust_extra || [];
+        this.all_in_one = this.#concatCgUrl('a');
     }
 
     #concatNormalCgUrls() {
