@@ -27,7 +27,7 @@ const logger = winston.createLogger({
         new winston.transports.File({
             filename: `${logDirectory}/kcrest-core-error.log`,
             level: 'error',
-            maxsize: 10240,
+            maxsize: 10240, // max size 10MB
             maxFiles: 2,
             tailable: true
         }),

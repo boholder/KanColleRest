@@ -20,7 +20,7 @@ class ResponseSender {
     }
 
     /*
-    Mian's screen shot resource won't be updated since I can't contact with her,
+    Mian's screenshot resource won't be updated since I can't contact with her,
         but providing a API to assess old resource still make sense.
     When trying to search and send images in mian's resource,
         ignore error log since it happens frequently.

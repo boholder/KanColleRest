@@ -9,7 +9,7 @@ import config from 'config';
 class ShipInfoController {
     static async getInfo(req, res) {
         if (req.query[ShipInfoRouteUtil.shipParam]) {
-            await this.#checkParamsAndMatch(req, res);
+            await this.#checkParamsThenMatch(req, res);
         } else {
             this.#sendHint(res);
         }
@@ -24,7 +24,7 @@ class ShipInfoController {
         ResponseSender.sendJson(res, hint);
     }
 
-    static async #checkParamsAndMatch(req, res) {
+    static async #checkParamsThenMatch(req, res) {
         let {
             shipParam,
             matchFormatParam,
@@ -37,7 +37,7 @@ class ShipInfoController {
         } = this.#checkIfParamsAreLegal(shipParam, matchFormatParam, responseFormatParam);
 
         if (paramsAreLegalFlag) {
-            await this.#matchShip(matchFormatParam, res, shipParam, responseFormatParam);
+            await this.#matchShipThenSend(res, matchFormatParam, shipParam, responseFormatParam);
         } else {
             ResponseSender.send400WhenRequestParamValueIllegal(res, illegalParamPairs);
         }
@@ -75,8 +75,7 @@ class ShipInfoController {
         return {paramsAreLegalFlag, illegalParamPairs};
     }
 
-    static async #matchShip(matchFormatParam, res, shipParam, responseFormatParam) {
-        // TODO response image
+    static async #matchShipThenSend(res, matchFormatParam, shipParam, responseFormatParam) {
         if (matchFormatParam === 'id') {
             await this.#matchById(res, shipParam, responseFormatParam);
         } else {
@@ -90,13 +89,7 @@ class ShipInfoController {
         // Attention: url param is string format, but id require number format.
         let id = parseInt(shipParam);
         if (id) {
-            ShipDao.getModelBy(parseInt(shipParam)).then(
-                value => {
-                    this.#checkResultThenSend([value], res, responseFormatParam);
-                }, reason => {
-                    this.#handleFailedMatch(res, reason, shipParam);
-                }
-            )
+            this.queryShipModelById(id, res, responseFormatParam);
         } else {
             // id is NaN, request wants to match id format but not gives "ship" param a number.
             ResponseSender.send400BadRequest(res,
@@ -105,29 +98,40 @@ class ShipInfoController {
         }
     }
 
-    static #checkResultThenSend(value, res, responseFormatParam) {
-        if (value && value[0]) {
+    static queryShipModelById(id, res, responseFormatParam) {
+        ShipDao.getModelBy(id).then(
+            value => {
+                this.#checkResultThenSend([value], res, responseFormatParam);
+            }, reason => {
+                this.#handleFailedMatch(res, reason, id);
+            }
+        )
+    }
+
+    static #checkResultThenSend(shipArray, res, responseFormatParam) {
+        if (shipArray && shipArray[0]) {
             // Hard code with response format param value: "json" and "img"
-            this.#sendResponse(res, responseFormatParam, value);
+            this.#sendResponse(res, responseFormatParam, shipArray);
         } else {
             ResponseSender.send204NoContent(res);
         }
     }
 
-    static #sendResponse(res, responseFormatParam, value) {
+    static #sendResponse(res, responseFormatParam, shipArray) {
         if (responseFormatParam === 'json') {
-            ResponseSender.sendJson(res, value);
+            ResponseSender.sendJson(res, shipArray);
         } else if (responseFormatParam === 'img') {
-            this.#sendShipInfoImage(res, value);
+            this.#sendShipInfoImage(res, shipArray);
         }
     }
 
-    static #sendShipInfoImage(res, value) {
+    static #sendShipInfoImage(res, shipArray) {
+        let oneShipModel = shipArray[0];
         let mianImageDir = config.get('resource.image.mian_image_dir');
-        let imagePath = 'no name structure or no zh_cn name in result';
-        if (value.name && value.name.zh_cn) {
+        let imagePath = '';
+        if (oneShipModel.name && oneShipModel.name.zh_cn) {
             imagePath =
-                `${mianImageDir}/ship/ship_info/${value.name.zh_cn}1.png`;
+                `${mianImageDir}/ship/ship_info/${oneShipModel.name.zh_cn}1.png`;
         }
         ResponseSender.sendPngOr404DontLogError(res, imagePath);
     }
@@ -139,7 +143,8 @@ class ShipInfoController {
 
         if (queryFailedInShipDbFlag) {
             ResponseSender.send400BadRequest(res,
-                `Invalid match value(ship parameter in request): ${shipParam}`);
+                `Database is corrupted (please contact with server admin) ` +
+                `or Invalid match value (${ShipInfoRouteUtil.shipParam} parameter in request): ${shipParam}`);
         } else {
             ResponseSender.send500InternalServerError(res);
         }
@@ -152,10 +157,9 @@ class ShipInfoController {
         let query = {};
         // example: nameKey = name.en_us, shipParam = "Yamato"
         query[nameKey] = shipParam;
-        // TODO fuzz matching?
         ShipDao.getModelsByQuery(query).then(
-            value => {
-                this.#checkResultThenSend(value, res, responseFormatParam);
+            resultArray => {
+                this.#checkResultThenSend(resultArray, res, responseFormatParam);
             }, reason => {
                 this.#handleFailedMatch(res, reason, shipParam);
             }

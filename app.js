@@ -44,10 +44,5 @@ app.use(expressWinstonLogger);
 // Load router
 app.use(router);
 
-// Start listening on port
-const serverPort = config.get('server.port');
-const serverIp = config.get('server.ip');
-const serverDomain = config.get('server.domain');
-app.listen(serverPort, serverIp, () => {
-    logger.info(`Listening on port ${serverPort}, ip ${serverIp}. Access it via ${serverDomain}.`);
-})
+export {app};
+

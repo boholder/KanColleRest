@@ -35,6 +35,7 @@ class ShipSeasonalCgModel {
         for (let id of cgArray) {
             let cg = await ShipSeasonalCgDao.getModelBy(id);
             cg.url = {};
+            // hard code cg id
             cg.url.whole_body = ShipCgRouteUtil.concatUrlWith(ship.id, `e${id}`);
             cg.url.whole_body_dmged = ShipCgRouteUtil.concatUrlWith(ship.id, `d${id}`);
             result.push(cg);

@@ -17,6 +17,7 @@ class ShipCgModel {
 
     #concatNormalCgUrls() {
         return {
+            // hard code cg id
             banner: this.#concatCgUrl('n0'),
             banner_masked: this.#concatCgUrl('n0-1'),
             banner_dmged: this.#concatCgUrl('n1'),

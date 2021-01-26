@@ -1,8 +1,8 @@
 # Tons of data file which can be get through npm or git.
 node_modules
 package-lock.json
-data/*
-
+data/image/mian_pics
+data/log
 # Visual studio project files
 .vs
 bin
@@ -14,7 +14,7 @@ obj
 .idea/*
 
 # This config file is for Github LFS, 
-# which can upload large file (that mian's picture zip file) to Github.
+# which can upload large file (mian's screenshot zip file) to Github.
 .gitattributes
 
 # Unfinished documents
