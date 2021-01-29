@@ -1,13 +1,13 @@
 import config from "config";
-import {ShipDao} from "../db/dao/ship.dao.js";
+import ShipDao from "../db/dao/ship.dao.js";
 import {ResponseSender} from "../route/response-sender.js";
 import {DatabaseQueryExecuteError} from "../util/error.js";
 import {DB_FILE_NAME} from "../db/dao/base.dao.js";
 import {ShipCgRouteUtil} from "../util/route/ship-cg-route.util.js";
 
-class ShipCgService {
+export default class ShipCgService {
     static matchShipById(res, id, cgIdParam) {
-        ShipDao.getIdNameBy(id).then(
+        return ShipDao.getIdNameBy(id).then(
             result => {
                 this.#matchThenSend(res, result, cgIdParam);
             }, reason => {
@@ -52,7 +52,7 @@ class ShipCgService {
                 break;
             default:
                 ResponseSender.send400BadRequest(res,
-                    `Invalid cg id: ${cgIdParam}`);
+                    `Invalid cg id:${cgIdParam}`);
         }
     }
 
@@ -74,11 +74,9 @@ class ShipCgService {
         if (queryFailedInShipDbFlag) {
             ResponseSender.send400BadRequest(res,
                 `Database is corrupted (please contact with server admin) ` +
-                `or Invalid match value (${ShipCgRouteUtil.shipIdParam} parameter in request): ${id}`);
+                `or Invalid match value (${ShipCgRouteUtil.shipIdParam} parameter in request):${id}`);
         } else {
             ResponseSender.send500InternalServerError(res);
         }
     }
 }
-
-export {ShipCgService};

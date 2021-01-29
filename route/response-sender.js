@@ -2,7 +2,7 @@ import fs from "fs";
 import {logger} from "../config/winston-logger.js";
 import {ImageSendingError} from "../util/error.js";
 
-class ResponseSender {
+export class ResponseSender {
 
     static sendJson(res, data = '') {
         res.json(data);
@@ -35,11 +35,11 @@ class ResponseSender {
         }
     }
 
-    static send204NoContent(res) {
-        res.status(204).end();
+    static send204NoContent(res, data = '') {
+        res.status(204).send(data);
     }
 
-    static send400WhenRequestParamValueIllegal(res, ...illegalParamPairs) {
+    static send400WhenRequestParamValuesHaveIllegal(res, ...illegalParamPairs) {
         let explanation = `Unsupported parameter value at: ${illegalParamPairs}`;
         this.send400BadRequest(res, explanation);
     }
@@ -67,5 +67,3 @@ class ResponseSender {
             '[https://github.com/boholder/KanColleREST/issues]');
     }
 }
-
-export {ResponseSender};

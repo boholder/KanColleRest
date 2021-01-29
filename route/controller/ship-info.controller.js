@@ -1,12 +1,13 @@
 import {ResponseSender} from "../response-sender.js";
 import {BaseRouteUtil} from "../../util/route/base-route.util.js";
 import {ShipInfoRouteUtil} from "../../util/route/ship-info-route.util.js";
-import {ShipInfoService} from "../../service/ship-info.service.js";
+import ShipInfoService from "../../service/ship-info.service.js";
+import ShipInfoRequestDto from "../../dto/ship-info-request.dto.js";
 
-class ShipInfoController {
-    static async getInfo(req, res) {
+export default class ShipInfoController {
+    static getInfo(req, res) {
         if (req.query[ShipInfoRouteUtil.shipParam]) {
-            await this.#checkParamsThenMatch(req, res);
+            this.#checkParamsThenMatch(req, res);
         } else {
             this.#sendHint(res);
         }
@@ -21,64 +22,61 @@ class ShipInfoController {
         ResponseSender.sendJson(res, hint);
     }
 
-    static async #checkParamsThenMatch(req, res) {
-        let {
-            shipParam,
-            matchFormatParam,
-            responseFormatParam
-        } = this.#getParamValuesFromRequest(req);
+    static #checkParamsThenMatch(req, res) {
+        let params = ShipInfoRequestDto.getParamsFromRequest(req);
 
         let {
             paramsAreLegalFlag,
             illegalParamPairs
-        } = this.#checkIfParamsAreLegal(shipParam, matchFormatParam, responseFormatParam);
+        } = this.#checkIfParamsAreLegal(params);
 
         if (paramsAreLegalFlag) {
-            await this.#matchShipThenSend(res, matchFormatParam, shipParam, responseFormatParam);
+            this.#matchThenSend(res, params);
         } else {
-            ResponseSender.send400WhenRequestParamValueIllegal(res, illegalParamPairs);
+            ResponseSender.send400WhenRequestParamValuesHaveIllegal(res, illegalParamPairs);
         }
     }
 
-    static #getParamValuesFromRequest(req) {
-        let shipParam = req.query[ShipInfoRouteUtil.shipParam];
-        // These two params have default value.
-        let matchFormatParam = req.query[ShipInfoRouteUtil.matchFormatParam] || 'zh_cn';
-        let responseFormatParam = req.query[ShipInfoRouteUtil.responseFormatParam] || 'json';
-        return {shipParam, matchFormatParam, responseFormatParam};
-    }
-
-    static #checkIfParamsAreLegal(shipParam, matchFormatParam, responseFormatParam) {
+    static #checkIfParamsAreLegal({ship, matchFormat, responseFormat}) {
         let paramsAreLegalFlag = true;
         let illegalParamPairs = [];
-        if (!shipParam) {
+        let matchFormatIsId = matchFormat === 'id';
+
+        // Attention: url param is string format, but id require number format.
+        let matchFormatIsIdButIdIsNotANumber =
+            matchFormatIsId && isNaN(parseInt(ship));
+
+        let matchForMatIsIdButIdIsNotPositive =
+            matchFormatIsId && parseInt(ship) <= 0
+
+        if (!ship || matchFormatIsIdButIdIsNotANumber || matchForMatIsIdButIdIsNotPositive) {
             let pair = {};
-            pair[ShipInfoRouteUtil.shipParam] = shipParam;
+            pair[ShipInfoRouteUtil.shipParam] = ship;
             illegalParamPairs.push(pair);
             paramsAreLegalFlag = false;
         }
-        if (!ShipInfoRouteUtil.matchFormatValues.includes(matchFormatParam)) {
+        if (!ShipInfoRouteUtil.matchFormatValues.includes(matchFormat)) {
             let pair = {};
-            pair[ShipInfoRouteUtil.matchFormatParam] = shipParam;
+            pair[ShipInfoRouteUtil.matchFormatParam] = ship;
             illegalParamPairs.push(pair);
             paramsAreLegalFlag = false;
         }
-        if (!ShipInfoRouteUtil.responseFormatValues.includes(responseFormatParam)) {
+        if (!ShipInfoRouteUtil.responseFormatValues.includes(responseFormat)) {
             let pair = {};
-            pair[ShipInfoRouteUtil.responseFormatParam] = shipParam;
+            pair[ShipInfoRouteUtil.responseFormatParam] = ship;
             illegalParamPairs.push(pair);
             paramsAreLegalFlag = false;
         }
         return {paramsAreLegalFlag, illegalParamPairs};
     }
 
-    static async #matchShipThenSend(res, matchFormatParam, shipParam, responseFormatParam) {
-        if (matchFormatParam === 'id') {
-            await ShipInfoService.matchById(res, shipParam, responseFormatParam);
+    static #matchThenSend(res, params) {
+        // hard code match format value: id
+        if (params.matchFormat === 'id') {
+            ShipInfoService.matchById(res, params);
         } else {
-            await ShipInfoService.matchByName(res, shipParam, matchFormatParam, responseFormatParam);
+            // matchFormatParam = ja_jp|zh_cn|en_us|ja_kana
+            ShipInfoService.matchByName(res, params);
         }
     }
 }
-
-export {ShipInfoController};

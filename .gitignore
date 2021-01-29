@@ -20,5 +20,8 @@ obj
 # Unfinished documents
 doc/unfinished-documents/*
 
+# script for trying call modules on root directory
+try.js
+
 # mian's pictures zip file
 mian_pic.7z

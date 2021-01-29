@@ -1,47 +1,37 @@
 import config from "config";
 import {ResponseSender} from "../route/response-sender.js";
 import {ShipInfoRouteUtil} from "../util/route/ship-info-route.util.js";
-import {ShipDao} from "../db/dao/ship.dao.js";
-import {DatabaseQueryExecuteError} from "../util/error.js";
+import ShipDao from "../db/dao/ship.dao.js";
+import {DatabaseQueryExecuteError, ModelBuildError} from "../util/error.js";
 import {DB_FILE_NAME} from "../db/dao/base.dao.js";
 
-class ShipInfoService {
-
-    static async matchById(res, shipParam, responseFormatParam) {
+export default class ShipInfoService {
+    static matchById(res, {ship: id, responseFormat}) {
         // Hard code with match format param value: "id"
         // This means shipParam is an id of one ship's one model.
-        // Attention: url param is string format, but id require number format.
-        let id = parseInt(shipParam);
-        if (id) {
-            this.queryShipModelById(id, res, responseFormatParam);
-        } else {
-            // id is NaN, request wants to match id format but not gives "ship" param a number.
-            ResponseSender.send400BadRequest(res,
-                `Request asked for matching in id format, ` +
-                `but ${ShipInfoRouteUtil.shipParam} param isn't a valid number: ${shipParam}`);
-        }
-    }
-
-    static queryShipModelById(id, res, responseFormatParam) {
-        ShipDao.getModelBy(id).then(
-            value => {
-                this.#checkResultThenSend([value], res, responseFormatParam);
+        return ShipDao.getModelBy(parseInt(id)).then(
+            result => {
+                // wrap result into array to maintain consistency with name query result.
+                this.#checkIdResultThenSend(res, [result], responseFormat);
             }, reason => {
                 this.#handleFailedMatch(res, reason, id);
             }
-        )
+        );
     }
 
-    static #checkResultThenSend(shipArray, res, responseFormatParam) {
-        if (shipArray && shipArray[0]) {
-            // Hard code with response format param value: "json" and "img"
-            this.#sendResponse(res, responseFormatParam, shipArray);
+    static #checkIdResultThenSend(res, shipArray, responseFormat) {
+        // When db query by id matches nothing,
+        // id query will be null and shipArray will be [null]
+        let idQueryReturnsTrusthy = shipArray[0] && Object.entries(shipArray[0]).length > 0;
+        if (shipArray.length === 1 && idQueryReturnsTrusthy) {
+            this.#sendResponse(res, shipArray, responseFormat);
         } else {
             ResponseSender.send204NoContent(res);
         }
     }
 
-    static #sendResponse(res, responseFormatParam, shipArray) {
+    static #sendResponse(res, shipArray, responseFormatParam) {
+        // Hard code with response format param value: "json" and "img"
         if (responseFormatParam === 'json') {
             ResponseSender.sendJson(res, shipArray);
         } else if (responseFormatParam === 'img') {
@@ -67,28 +57,86 @@ class ShipInfoService {
 
         if (queryFailedInShipDbFlag) {
             ResponseSender.send400BadRequest(res,
-                `Database is corrupted (please contact with server admin) ` +
-                `or Invalid match value (${ShipInfoRouteUtil.shipParam} parameter in request): ${shipParam}`);
+                `Error occurred when querying ship database. ` +
+                `Maybe ship database is corrupted (please contact with server admin) ` +
+                `or match value (${ShipInfoRouteUtil.shipParam}) matched nothing:${shipParam}`);
+        } else if (reason instanceof ModelBuildError) {
+            ResponseSender.send400BadRequest(res,
+                `Error occurred when building result form query result. ` +
+                `Maybe ship database is corrupted (please contact with server admin) ` +
+                `or match value (${ShipInfoRouteUtil.shipParam}) is invalid:${shipParam}`);
         } else {
             ResponseSender.send500InternalServerError(res);
         }
     }
 
-    static async matchByName(res, shipParam, matchFormatParam, responseFormatParam) {
-        // Hard code with rest of format param values
+    static matchByName(res, params) {
         // This means shipParam is a name format.
-        let nameKey = `name.${matchFormatParam}`;
-        let query = {};
-        // example: nameKey = name.en_us, shipParam = "Yamato"
-        query[nameKey] = shipParam;
-        ShipDao.getModelsByQuery(query).then(
+        // Hard code with rest of format param values
+        let query = this.#buildNameQuery(params.ship, params.matchFormat);
+        return ShipDao.getModelsBy(query).then(
             resultArray => {
-                this.#checkResultThenSend(resultArray, res, responseFormatParam);
+                this.#checkNameResultThenSend(res, resultArray, params);
             }, reason => {
-                this.#handleFailedMatch(res, reason, shipParam);
+                this.#handleFailedMatch(res, reason, params.ship);
             }
         );
     }
-}
 
-export {ShipInfoService};
+    static #buildNameQuery(shipParam, matchFormatParam) {
+        let nameKey = `name.${matchFormatParam}`;
+        let nameValue = shipParam;
+
+        if (matchFormatParam === 'en_us') {
+            // ship name have ja_romaji format,
+            // which is lowercase letters of "English name"
+            nameKey = `name.ja_romaji`;
+            nameValue = shipParam.toLowerCase();
+        }
+
+        // example: nameKey = name.ja_romaji, shipParam = "Yamato" -> "yamato"
+        let query = {};
+        query[nameKey] = nameValue;
+        return query;
+    }
+
+    static #checkNameResultThenSend(res, shipArray, params) {
+        if (shipArray.length > 0) {
+            this.#sendResponse(res, shipArray, params.responseFormat);
+        } else {
+            // match format is name, try to send suggest instead of 204
+            this.#tryToGetSimilarNamesThenSendSuggest(res, params);
+        }
+    }
+
+    /*
+    When match format is a name format,
+        return similar ship names as suggest based on shipParam & match format,
+        instead of just return [204 No Content].
+     */
+    static #tryToGetSimilarNamesThenSendSuggest(res, {ship, matchFormat}) {
+        let fuzzyShipName = `.*${ship}.*`;
+        let query = this.#buildNameQuery(fuzzyShipName, matchFormat);
+        ShipDao.getNamesBy(query).then(
+            nameModelArray => {
+                this.#checkSimilarNamesResultThenSend(res, nameModelArray, matchFormat);
+            }, reason => {
+                this.#handleFailedMatch(res, reason, ship);
+            }
+        )
+    }
+
+    static #checkSimilarNamesResultThenSend(res, names, matchFormatParam) {
+        if (names.length !== 0) {
+            let similarNames = [];
+            for (let name of names) {
+                similarNames.push(name[matchFormatParam]);
+            }
+            ResponseSender.send204NoContent(res,
+                `Found no result under exact match. ` +
+                `Here are all similar valid ship names:${similarNames}`);
+        } else {
+            ResponseSender.send204NoContent(res);
+        }
+    }
+}

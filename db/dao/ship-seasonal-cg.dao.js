@@ -1,5 +1,5 @@
 import {BaseDao, DB_FILE_NAME} from "./base.dao.js";
-import {ShipSeasonalCgModel} from "../../model/ship/ship-seasonal-cg.model.js";
+import {ShipSeasonalCgModel} from "../model/ship/ship-seasonal-cg.model.js";
 
 class ShipSeasonalCgDao extends BaseDao {
     static #callInit = super.initDatastoreWith(DB_FILE_NAME.seasonal_cg);

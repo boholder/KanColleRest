@@ -2,23 +2,18 @@ import config from 'config'
 
 class BaseRouteUtil {
     static #apiVersion = config.get('api.current_version');
-    static rootUrl = this.getRootUrl();
-    static #versionUrl = `${this.rootUrl}/${this.#apiVersion}`;
+    // http://[domain]
+    static rootUrl = this.#getRootUrl();
+    // http://[domain]/[api version]
+    static versionUrl = `${this.rootUrl}/${this.#apiVersion}`;
 
     /*
     return: http://[domain]
     */
-    static getRootUrl() {
+    static #getRootUrl() {
         let protocol = config.get('server.use_TLS') ? "https" : "http";
         let domain = config.get('server.domain');
         return `${protocol}://${domain}`;
-    }
-
-    /*
-    return: http://[domain]/[api version]
-     */
-    static getVersionUrl() {
-        return this.#versionUrl;
     }
 
     /*
@@ -29,28 +24,28 @@ class BaseRouteUtil {
     }
 
     /*
-    return http://[domain]/[api version]/[urlPrefix]/[config.get(apiConfigKey.route)]
+    return http://[domain]/[api version]/[middleUrlPart]/[config.get(apiConfigKey.route)]
     example: http://example.com/v1/ship/info
      */
-    static concatUrlWith(urlPrefix, apiConfigKey) {
+    static concatVersionUrlWith(middleUrlPart, apiConfigKey) {
         let route = config.get(`${apiConfigKey}.route`);
-        return BaseRouteUtil.#concatVersionUrlWith(`${urlPrefix}/${route}`);
+        return BaseRouteUtil.#concatVersionUrlWithApi(`${middleUrlPart}/${route}`);
     }
 
     /*
     return http://[domain]/[api version]/[apiPart]
      */
-    static #concatVersionUrlWith(apiPart) {
-        return `${this.#versionUrl}/${apiPart}`;
+    static #concatVersionUrlWithApi(apiPart) {
+        return `${this.versionUrl}/${apiPart}`;
     }
 
     /*
-    return: /[api version]/[urlPrefix]/[config.get(apiConfigKey.route)] for router routing
+    return: /[api version]/[middleUrlPart]/[config.get(apiConfigKey.route)] for router routing
     example: /v1/ship/info
      */
-    static concatVersionRouteWIth(urlPrefix, apiConfigKey) {
+    static concatVersionRouteWIth(middleUrlPart, apiConfigKey) {
         let route = config.get(`${apiConfigKey}.route`);
-        return `/${this.#apiVersion}/${urlPrefix}/${route}`;
+        return `/${this.#apiVersion}/${middleUrlPart}/${route}`;
     }
 }
 

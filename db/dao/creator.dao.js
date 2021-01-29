@@ -1,6 +1,6 @@
 import {BaseDao, DB_FILE_NAME} from "./base.dao.js";
-import {CreatorModel} from "../../model/creator.model.js";
-import {SimplifiedFieldEntityModel} from "../../model/simplified-field-entity.model.js";
+import {CreatorModel} from "../model/creator.model.js";
+import {SimplifiedFieldEntityModel} from "../model/simplified-field-entity.model.js";
 
 class CreatorDao extends BaseDao {
     static #callInit = super.initDatastoreWith(DB_FILE_NAME.creator);

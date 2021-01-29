@@ -3,9 +3,9 @@
 import express from "express";
 import {ShipInfoRouteUtil} from "../util/route/ship-info-route.util.js";
 import {ShipCgRouteUtil} from "../util/route/ship-cg-route.util.js";
-import {RootController} from "./controller/root.controller.js";
-import {ShipInfoController} from "./controller/ship-info.controller.js";
-import {ShipCgController} from "./controller/ship-cg.controller.js";
+import RootController from "./controller/root.controller.js";
+import ShipInfoController from "./controller/ship-info.controller.js";
+import ShipCgController from "./controller/ship-cg.controller.js";
 
 const router = express.Router();
 

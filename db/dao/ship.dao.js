@@ -1,24 +1,36 @@
 import {BaseDao, DB_FILE_NAME} from "./base.dao.js";
-import {SimplifiedFieldEntityModel} from "../../model/simplified-field-entity.model.js";
-import {ShipModel} from "../../model/ship.model.js";
+import {SimplifiedFieldEntityModel} from "../model/simplified-field-entity.model.js";
+import {ShipModel} from "../model/ship.model.js";
+import {NameModel} from "../model/name.model.js";
 
-class ShipDao extends BaseDao {
+export default class ShipDao extends BaseDao {
     static #callInit = super.initDatastoreWith(DB_FILE_NAME.ship);
 
     static async getModelBy(id) {
-        return ShipModel.build(
-            await super.getOneById(id, {_id: 0}));
+        return super.getOneById(id, {_id: 0}).then(
+            value => ShipModel.build(value),
+            reason => Promise.reject(reason)
+        )
     }
 
-    static async getModelsByQuery(query){
-        return await ShipModel.buildModelArrayFrom(
-            await super.getManyByQuery(query, {_id: 0}));
+    static async getModelsBy(query) {
+        return super.getManyByQuery(query, {_id: 0}).then(
+            value => ShipModel.buildModelArrayFrom(value),
+            reason => Promise.reject(reason)
+        );
     }
 
     static async getIdNameBy(id) {
-        return SimplifiedFieldEntityModel.build(
-            await super.getOneById(id, {name: 1, id: 1}));
+        return super.getOneById(id, {name: 1, id: 1}).then(
+            value => SimplifiedFieldEntityModel.build(value),
+            reason => Promise.reject(reason)
+        );
+    }
+
+    static async getNamesBy(query) {
+        return super.getManyByQuery(query, {name: 1}).then(
+            value => NameModel.buildModelArrayFromArray(value),
+            reason => Promise.reject(reason)
+        );
     }
 }
-
-export {ShipDao};

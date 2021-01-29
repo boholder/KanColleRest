@@ -2,7 +2,7 @@ import {ResponseSender} from "../response-sender.js";
 import {ShipInfoRouteUtil} from "../../util/route/ship-info-route.util.js";
 import {ShipCgRouteUtil} from "../../util/route/ship-cg-route.util.js";
 
-class RootController {
+export default class RootController {
     static getRoot(req, res) {
         let response = {
             "project_url":
@@ -15,5 +15,3 @@ class RootController {
         ResponseSender.sendJson(res, response);
     }
 }
-
-export {RootController};

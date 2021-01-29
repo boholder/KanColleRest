@@ -1,6 +1,6 @@
 import {BaseDao, DB_FILE_NAME} from "./base.dao.js";
-import {ShipTypeModel} from "../../model/ship/ship-type.model.js";
-import {SimplifiedFieldEntityModel} from "../../model/simplified-field-entity.model.js";
+import {ShipTypeModel} from "../model/ship/ship-type.model.js";
+import {SimplifiedFieldEntityModel} from "../model/simplified-field-entity.model.js";
 
 class ShipTypeDao extends BaseDao {
     static #callInit = super.initDatastoreWith(DB_FILE_NAME.ship_type);

@@ -10,46 +10,51 @@ if (!fs.existsSync(logDirectory)) {
 }
 
 // https://github.com/winstonjs/winston
-const logger = winston.createLogger({
+// - Write to all logs with level `info` and below to `kcrest-combined.log`.
+const infoFileTransport = new winston.transports.File({
+    filename: `${logDirectory}/kcrest-core-combined.log`,
     level: 'info',
-    format: winston.format.combine(
-        winston.format.timestamp({
-            format: 'YYYY-MM-DD HH:mm:ss'
-        }),
-        winston.format.errors({stack: true}),
-        winston.format.json()
-    ),
-    transports: [
-        //
-        // - Write to all logs with level `info` and below to `kcrest-combined.log` and print them on console.
-        // - Write all logs error (and below) to `kcrest-error.log`.
-        //
-        new winston.transports.File({
-            filename: `${logDirectory}/kcrest-core-error.log`,
-            level: 'error',
-            maxsize: 10240, // max size 10MB
-            maxFiles: 2,
-            tailable: true
-        }),
-        new winston.transports.File({
-            filename: `${logDirectory}/kcrest-core-combined.log`,
-            level: 'info',
-            maxsize: 10240,
-            maxFiles: 2,
-            tailable: true
-        })
-    ]
+    maxsize: 10240,
+    maxFiles: 2,
+    tailable: true
 });
+// - Write all logs error (and below) to `kcrest-error.log`.
+const errorFileTransport = new winston.transports.File({
+    filename: `${logDirectory}/kcrest-core-error.log`,
+    level: 'error',
+    maxsize: 10240, // max size 10MB
+    maxFiles: 2,
+    tailable: true
+});
+
+const logger = winston.createLogger({
+        level: 'info',
+        format: winston.format.combine(
+            winston.format.timestamp({
+                format: 'YYYY-MM-DD HH:mm:ss'
+            }),
+            winston.format.errors({stack: true}),
+            winston.format.json()
+        ),
+        transports: [infoFileTransport, errorFileTransport]
+    })
+;
 // To avoid logger exit after record an unhandled exception.
 logger.exitOnError = false;
 
 if (process.env.NODE_ENV !== 'production') {
+    // add a console transport for convenient when debugging & testing
     logger.add(new winston.transports.Console({
         format: winston.format.combine(
             winston.format.colorize(),
             winston.format.simple()
         )
     }));
+    // disable logging into log files since running tests action is frequent.
+    if (process.env.NODE_ENV === 'test') {
+        logger.remove(infoFileTransport);
+        logger.remove(errorFileTransport);
+    }
 }
 
 // https://github.com/bithavoc/express-winston

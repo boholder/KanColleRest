@@ -1,2 +1,4 @@
-let s = '2.3'
-console.log(parseInt(s));
+let a = 1;
+let b = JSON.stringify(undefined);
+a = JSON.parse(b);
+console.log(a)

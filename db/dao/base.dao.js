@@ -1,4 +1,5 @@
 import config from "config";
+import fs from "fs";
 import Datastore from "nedb-promises";
 import {logger} from "../../config/winston-logger.js";
 import {DatabaseInitializingError, DatabaseQueryExecuteError, DatabaseQueryFormatError} from "../../util/error.js";
@@ -20,19 +21,28 @@ class BaseDao {
     static datastore = null;
 
     static initDatastoreWith(dbFileName) {
+        // See if pasted db file exists or not
+        let dbPath = this.buildDbPathWith(dbFileName);
         try {
-            this.datastore = Datastore.create(
-                this.buildDbCreationOptionWith(dbFileName)
-            );
+            if (fs.existsSync(dbPath)) {
+                // Nedb won't throw error when creating Datastore instance,
+                // it just set db file path into instance for further use.
+                this.datastore = Datastore.create(
+                    this.buildDbCreationOptionWith(dbPath)
+                );
+            } else {
+                throw Error('file not exists');
+            }
         } catch (error) {
-            logger.error(
-                new DatabaseInitializingError(dbFileName, error).toString());
+            let initError = new DatabaseInitializingError(dbPath, error);
+            logger.error(initError.toString());
+            throw initError;
         }
     }
 
-    static buildDbCreationOptionWith(dbFileName) {
+    static buildDbCreationOptionWith(filePath) {
         return {
-            filename: this.buildDbPathWith(dbFileName),
+            filename: filePath,
             autoload: true
         };
     }
@@ -43,78 +53,104 @@ class BaseDao {
 
     static async getOneById(id, projection = {}) {
         if (id) {
-            return await this.findOne(id, projection);
+            return this.findOne(id, projection);
         } else {
-            logger.warn(new DatabaseQueryFormatError(id).toString());
-            return {};
+            return this.rejectAndLogWarnQueryFormatError(id);
         }
     }
 
+    /*
+    Execute query and handle promise type result.
+     */
     static async findOne(id, projection) {
-        // TODO check error handle when missing db file
         return this.datastore.findOne({id: id}, projection).then(
-            value => {
-                if (value) {
-                    return value;
-                } else {
-                    // query id isn't in db, value is null
-                    this.rejectWithError(id);
-                }
-            }, reason => {
-                // something bad happened inside nedb
-                logger.error(
-                    this.buildDatabaseQueryExecuteError(
-                        new Error(reason).toString()));
-            });
+            result => this.checkResultThenReturn(result, this.checkIdQueryResult(result), id),
+            reason => this.rejectAndLog(reason));
     }
 
-    static rejectWithError(query) {
-        let error = this.buildDatabaseQueryExecuteError(
-            new DatabaseQueryFormatError(query));
+    static checkResultThenReturn(value, checkResult, query) {
+        // when matches nothing, value is null
+        if (checkResult) {
+            return value;
+        } else {
+            return this.rejectAndLogWarnExecuteError(
+                new Error(`query matched nothing:${JSON.stringify(query)}`));
+        }
+    }
+
+    static checkIdQueryResult(result) {
+        return result ? true : false;
+    }
+
+    static rejectAndLog(reason) {
+        // something bad happened inside nedb
+        return this.rejectAndLogErrorExecuteError(
+            new Error(`query rejected by nedb:${reason}`));
+    }
+
+    /*
+        log in warn level
+         */
+    static rejectAndLogWarnExecuteError(inner = undefined) {
+        let error = this.warpErrorWithExecuteError(inner);
         logger.warn(error.toString());
-        throw error;
+        return Promise.reject(error);
     }
 
-    static buildDatabaseQueryExecuteError(innerError) {
-        return new DatabaseQueryExecuteError(
-            this.getDbNameFrom(this.datastore),
-            innerError);
+    static warpErrorWithExecuteError(inner) {
+        let error = new DatabaseQueryExecuteError(this.getDbNameFrom(this.datastore), inner);
+        return error;
+    }
+
+    /*
+    log in error level
+     */
+    static rejectAndLogErrorExecuteError(inner = undefined) {
+        let error = this.warpErrorWithExecuteError(inner);
+        logger.error(error.toString());
+        return Promise.reject(error);
+    }
+
+    /*
+        Query|id passed to base dao is falsy,
+        can't build a valid query option before execute query.
+         */
+    static async rejectAndLogWarnQueryFormatError(query) {
+        let error = new DatabaseQueryFormatError(query);
+        logger.warn(error.toString());
+        return Promise.reject(error);
     }
 
     static getDbNameFrom(datastore) {
         if (datastore) {
             let dbFilePath = datastore.__original.filename;
-            let regex = /([a-z]+).nedb/;
-            return dbFilePath.match(regex)[1];
+            let regex = /[a-z]+.nedb/;
+            return dbFilePath.match(regex)[0];
         } else {
-            return 'corrupted_database';
+            return 'falsy_db_name';
         }
     }
 
     static async getManyByQuery(query, projection = {}) {
-        if (query) {
-            return await this.findMany(query, projection);
+        let queryIsTrusthyAndNotEmptyFlag = query && Object.entries(query).length > 0;
+        if (queryIsTrusthyAndNotEmptyFlag) {
+            return this.findMany(query, projection);
         } else {
-            logger.warn(new DatabaseQueryFormatError(query).toString());
-            return [];
+            return this.rejectAndLogWarnQueryFormatError(query);
         }
     }
 
     static async findMany(query, projection) {
         return this.datastore.find(query, projection).then(
-            value => {
-                if (value) {
-                    return value;
-                } else {
-                    this.rejectWithError(query);
-                }
-            }, reason => {
-                logger.error(
-                    this.buildDatabaseQueryExecuteError(
-                        new Error(reason).toString()));
-            });
+            result => this.checkResultThenReturn(result, this.checkNameQueryResult(result), query),
+            reason => this.rejectAndLog(reason)
+        );
+    }
+
+    static checkNameQueryResult(result) {
+        // when matches nothing, value is []
+        return result.length > 0;
     }
 }
-
 
 export {DB_FILE_NAME, Datastore, BaseDao};

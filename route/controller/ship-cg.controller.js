@@ -1,18 +1,18 @@
 import {ShipCgRouteUtil} from "../../util/route/ship-cg-route.util.js";
 import {BaseRouteUtil} from "../../util/route/base-route.util.js";
 import {ResponseSender} from "../response-sender.js";
-import {ShipCgService} from "../../service/ship-cg.service.js";
+import ShipCgService from "../../service/ship-cg.service.js";
 
-class ShipCgController {
-    static async getCg(req, res) {
+export default class ShipCgController {
+    static getCg(req, res) {
         if (req.query[ShipCgRouteUtil.shipIdParam]) {
-            await this.#checkParamsThenMatch(req, res);
+            this.#checkParamsThenMatch(req, res);
         } else {
             this.#sendHint(res);
         }
     }
 
-    static async #checkParamsThenMatch(req, res) {
+    static #checkParamsThenMatch(req, res) {
         let shipIdParam = req.query[ShipCgRouteUtil.shipIdParam];
         let cgIdParam = req.query[ShipCgRouteUtil.cgIdParam];
 
@@ -20,9 +20,9 @@ class ShipCgController {
             this.#getParamValuesFromRequest(shipIdParam, cgIdParam);
 
         if (paramsAreLegalFlag) {
-            await this.#checkShipIdIsValidNumberThenMatch(res, shipIdParam, cgIdParam);
+            this.#checkShipIdIsValidNumberThenMatch(res, shipIdParam, cgIdParam);
         } else {
-            ResponseSender.send400WhenRequestParamValueIllegal(res, illegalParamPairs);
+            ResponseSender.send400WhenRequestParamValuesHaveIllegal(res, illegalParamPairs);
         }
     }
 
@@ -45,7 +45,7 @@ class ShipCgController {
         return {paramsAreLegalFlag, illegalParamPairs};
     }
 
-    static async #checkShipIdIsValidNumberThenMatch(res, shipIdParam, cgIdParam) {
+    static #checkShipIdIsValidNumberThenMatch(res, shipIdParam, cgIdParam) {
         let id = parseInt(shipIdParam);
         if (id) {
             ShipCgService.matchShipById(res, id, cgIdParam);
@@ -65,5 +65,3 @@ class ShipCgController {
         ResponseSender.sendJson(res, hint);
     }
 }
-
-export {ShipCgController};
