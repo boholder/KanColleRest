@@ -15,7 +15,9 @@ export class ResponseSender {
             res.end(image, 'binary');
         } catch (error) {
             logger.error(new ImageSendingError(imagePath, error).toString());
-            this.send404NotFound(res);
+            this.send404NotFound(res,
+                'Can\'t found cg file based on cg id in request, ' +
+                'maybe file is not exists by mistake or cg id is invalid.');
         }
     }
 

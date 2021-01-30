@@ -9,8 +9,7 @@ import express from "express";
 
 export const app = express();
 
-// TODO 如何让nedb在nodejs中持久，不重复创建（现有的static可行吗？）。
-//  并发请求性能测试(基准测试)，是否要在linux服务器中做测试？
+// TODO 并发请求性能测试(基准测试)，是否要在linux服务器中做测试？
 
 // Forcing re-send response rather than send 304(Not Modified)(Browser presents cached content)
 //      when developing, for simulation debugging convenient.

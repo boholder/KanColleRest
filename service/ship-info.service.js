@@ -69,7 +69,7 @@ export default class ShipInfoService {
 
         if (queryFailedInShipDbFlag) {
             ResponseSender.send400BadRequest(res,
-                `Ship database(processed by nedb) rejects query. ` +
+                `Ship database(processed by nedb) rejected query. ` +
                 `Maybe ship database is corrupted, please contact with server admin.`);
         } else if (matchesNothingInShipDbFlag) {
             ResponseSender.send404NotFound(res,
@@ -146,7 +146,7 @@ export default class ShipInfoService {
     static #tryToGetSimilarNamesThenSendSuggestion(res, {ship, matchFormat}) {
         let query = this.#buildNameQuery(ship, matchFormat);
         // replace query
-        let [key, value] = Object.entries(query)[0];
+        let key = Object.entries(query)[0][0];
         let fuzzyShipName = new RegExp(`.*${ship}.*`);
         let fuzzyQuery = {};
         fuzzyQuery[key] = {$regex: fuzzyShipName}

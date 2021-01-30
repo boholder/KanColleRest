@@ -1,12 +1,12 @@
 import config from "config";
 import ShipDao from "../db/dao/ship.dao.js";
 import {ResponseSender} from "../route/response-sender.js";
-import {DatabaseQueryExecuteError} from "../util/error.js";
+import {DatabaseQueryExecuteFailError, DatabaseQueryExecuteNoResultError} from "../util/error.js";
 import {DB_FILE_NAME} from "../db/dao/base.dao.js";
-import {ShipCgRouteUtil} from "../util/route/ship-cg-route.util.js";
+import {ShipInfoRouteUtil} from "../util/route/ship-info-route.util";
 
 export default class ShipCgService {
-    static matchShipById(res, id, cgIdParam) {
+    static matchById(res, id, cgIdParam) {
         return ShipDao.getIdNameBy(id).then(
             result => this.#matchThenSend(res, result, cgIdParam),
             reason => this.#handleFailedMatch(res, reason, id)
@@ -65,15 +65,23 @@ export default class ShipCgService {
     }
 
     static #handleFailedMatch(res, reason, id) {
-        // TODO change execute error to subclass
         let queryFailedInShipDbFlag =
-            reason instanceof DatabaseQueryExecuteError
-            && reason.db === DB_FILE_NAME.ship;
+            reason instanceof DatabaseQueryExecuteFailError
+            && reason.db === DB_FILE_NAME.ship + '.nedb';
+
+        let matchesNothingInShipDbFlag =
+            reason instanceof DatabaseQueryExecuteNoResultError
+            && reason.db === DB_FILE_NAME.ship + '.nedb';
 
         if (queryFailedInShipDbFlag) {
             ResponseSender.send400BadRequest(res,
-                `Database is corrupted (please contact with server admin) ` +
-                `or Invalid match value (${ShipCgRouteUtil.shipIdParam} parameter in request):${id}`);
+                `Ship database(processed by nedb) rejected query. ` +
+                `Maybe ship database is corrupted, please contact with server admin.`);
+        } else if (matchesNothingInShipDbFlag) {
+            ResponseSender.send404NotFound(res,
+                `Request matches nothing in ship database. ` +
+                `Maybe ship database is corrupted (lost this ship's relative records) ` +
+                `or match value (${ShipInfoRouteUtil.shipParam}) is invalid:${id}`)
         } else {
             ResponseSender.send500InternalServerError(res);
         }

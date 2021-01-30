@@ -42,7 +42,6 @@ export default class ShipInfoController {
         let illegalParamPairs = [];
         let matchFormatIsId = matchFormat === 'id';
 
-        // Attention: url param is string format, but id require number format.
         let id = parseInt(ship);
         let matchFormatIsIdButIdIsNotANumber =
             matchFormatIsId && isNaN(id);
@@ -51,7 +50,6 @@ export default class ShipInfoController {
             matchFormatIsId && id <= 0
 
         let idIsNumberButTooBig = id ? id > 10000 : false;
-        //TODO check ship should not contains special character. (escape ship string)
 
         if (!ship || matchFormatIsIdButIdIsNotANumber
             || idIsNumberButNotPositive || idIsNumberButTooBig) {

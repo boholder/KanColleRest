@@ -2,10 +2,12 @@ import {ShipCgRouteUtil} from "../../util/route/ship-cg-route.util.js";
 import {BaseRouteUtil} from "../../util/route/base-route.util.js";
 import {ResponseSender} from "../response-sender.js";
 import ShipCgService from "../../service/ship-cg.service.js";
+import {ShipInfoRouteUtil} from "../../util/route/ship-info-route.util";
 
 export default class ShipCgController {
     static getCg(req, res) {
-        if (req.query[ShipCgRouteUtil.shipIdParam]) {
+        if (req.query[ShipCgRouteUtil.shipIdParam]
+            && req.query[ShipCgRouteUtil.cgIdParam]) {
             this.#checkParamsThenMatch(req, res);
         } else {
             this.#sendHint(res);
@@ -13,47 +15,44 @@ export default class ShipCgController {
     }
 
     static #checkParamsThenMatch(req, res) {
-        let shipIdParam = req.query[ShipCgRouteUtil.shipIdParam];
-        let cgIdParam = req.query[ShipCgRouteUtil.cgIdParam];
+        let shipIdParam = req.query[ShipCgRouteUtil.shipIdParam] || NaN;
+        let cgIdParam = req.query[ShipCgRouteUtil.cgIdParam] || '';
 
         let {paramsAreLegalFlag, illegalParamPairs} =
-            this.#getParamValuesFromRequest(shipIdParam, cgIdParam);
+            this.#checkIfParamsAreLegal(shipIdParam, cgIdParam);
 
         if (paramsAreLegalFlag) {
-            this.#checkShipIdIsValidNumberThenMatch(res, shipIdParam, cgIdParam);
+            ShipCgService.matchById(res, parseInt(shipIdParam), cgIdParam);
         } else {
             ResponseSender.send400WhenRequestParamValuesHaveIllegal(res, illegalParamPairs);
         }
     }
 
-    static #getParamValuesFromRequest(shipIdParam, cgIdParam) {
+    static #checkIfParamsAreLegal(shipIdParam, cgIdParam) {
         let paramsAreLegalFlag = true;
         let illegalParamPairs = [];
-        let shipIdIsNotAValidNumber = !shipIdParam || !parseInt(shipIdParam);
-        if (shipIdIsNotAValidNumber) {
+        let id = parseInt(shipIdParam);
+
+        let idIsNotANumber = isNaN(id);
+        let idIsNumberButNotPositive = id <= 0
+        let idIsNumberButTooBig = id ? id > 10000 : false;
+
+        if (!shipIdParam || idIsNotANumber
+            || idIsNumberButNotPositive || idIsNumberButTooBig) {
+
             let pair = {};
-            pair[ShipCgRouteUtil.shipIdParam] = shipIdParam;
+            pair[ShipInfoRouteUtil.shipParam] = shipIdParam;
             illegalParamPairs.push(pair);
             paramsAreLegalFlag = false;
         }
-        if (!cgIdParam) {
+        let cgTypeAbbreviation = (cgIdParam + '').charAt(0);
+        if (!cgIdParam || !ShipCgRouteUtil.cgTypeAbbrValues.includes(cgTypeAbbreviation)) {
             let pair = {};
             pair[ShipCgRouteUtil.cgIdParam] = cgIdParam;
             illegalParamPairs.push(pair);
             paramsAreLegalFlag = false;
         }
         return {paramsAreLegalFlag, illegalParamPairs};
-    }
-
-    static #checkShipIdIsValidNumberThenMatch(res, shipIdParam, cgIdParam) {
-        let id = parseInt(shipIdParam);
-        if (id) {
-            ShipCgService.matchShipById(res, id, cgIdParam);
-        } else {
-            // id is NaN, request wants to match id format but not gives "ship" param a number.
-            ResponseSender.send400BadRequest(res,
-                `${ShipCgRouteUtil.shipIdParam} param isn't a valid number: ${shipIdParam}`);
-        }
     }
 
     static #sendHint(res) {

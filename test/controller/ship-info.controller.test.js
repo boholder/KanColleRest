@@ -32,7 +32,7 @@ it('send hint json to GET request ' +
     expect(res.json).toBeCalledTimes(1);
 })
 
-describe('Controller send 400 when any of 3 request params contains invalid value', () => {
+describe('Controller response 400 when any of 3 request params contains invalid value', () => {
     test('request match format is id but match value is not a number', async () => {
         let req = new Request(
             ShipInfoRouteUtil.buildRequestRouteWith(
@@ -71,7 +71,7 @@ describe('Controller send 400 when any of 3 request params contains invalid valu
     })
 });
 
-describe('Controller send normal response to correct requests, ' +
+describe('Controller response normally to correct requests, ' +
     'which will call service methods', () => {
 
     test('request format id, response json format', async () => {

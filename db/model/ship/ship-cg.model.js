@@ -32,7 +32,7 @@ class ShipCgModel {
     }
 
     #concatCgUrl(cgId) {
-        return ShipCgRouteUtil.buildRequstUrlWith(this.ship_id, cgId);
+        return ShipCgRouteUtil.buildRequestUrlWith(this.ship_id, cgId);
     }
 
     static async build(ship = {}) {

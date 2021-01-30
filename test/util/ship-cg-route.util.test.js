@@ -6,6 +6,6 @@ test.skip('print all constants & methods output', () => {
     outputs.push(ShipCgRouteUtil.url);
     outputs.push(ShipCgRouteUtil.shipIdParam);
     outputs.push(ShipCgRouteUtil.cgIdParam);
-    outputs.push(ShipCgRouteUtil.buildRequstUrlWith(1, 1));
+    outputs.push(ShipCgRouteUtil.buildRequestUrlWith(1, 1));
     console.log(outputs);
 })

@@ -77,7 +77,8 @@
           "route": "cg",
           "param": {
             "ship_id": "shipid",
-            "cg_id": "cgid"
+            "cg_id": "cgid",
+            "cg_type_abbreviation_values": ["n","e","d","a"]
           }
         }
       }

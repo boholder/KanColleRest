@@ -36,8 +36,8 @@ class ShipSeasonalCgModel {
             let cg = await ShipSeasonalCgDao.getModelBy(id);
             cg.url = {};
             // hard code cg id
-            cg.url.whole_body = ShipCgRouteUtil.buildRequstUrlWith(ship.id, `e${id}`);
-            cg.url.whole_body_dmged = ShipCgRouteUtil.buildRequstUrlWith(ship.id, `d${id}`);
+            cg.url.whole_body = ShipCgRouteUtil.buildRequestUrlWith(ship.id, `e${id}`);
+            cg.url.whole_body_dmged = ShipCgRouteUtil.buildRequestUrlWith(ship.id, `d${id}`);
             result.push(cg);
         }
         return result;

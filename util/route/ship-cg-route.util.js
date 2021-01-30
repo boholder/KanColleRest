@@ -8,11 +8,12 @@ class ShipCgRouteUtil {
 
     static shipIdParam = config.get(`${this.#conFigKey}.param.ship_id`);
     static cgIdParam = config.get(`${this.#conFigKey}.param.cg_id`);
+    static cgTypeAbbrValues = config.get(`${this.#conFigKey}.param.cg_type_abbreviation_values`);
 
     /*
      http://[domain]/[api version]/ship/cg?shipid={shipId}&cgid={cgId}
      */
-    static buildRequstUrlWith(shipId, cgId) {
+    static buildRequestUrlWith(shipId, cgId) {
         return `${this.url}?${this.shipIdParam}=${shipId}&${this.cgIdParam}=${cgId}`;
     }
 
@@ -20,7 +21,7 @@ class ShipCgRouteUtil {
     For jest tests
     /[api version]/ship/cg?shipid={shipId}&cgid={cgId}
     */
-    static buildRequstRouteWith(shipId, cgId) {
+    static buildRequestRouteWith(shipId, cgId) {
         return `${this.route}?${this.shipIdParam}=${shipId}&${this.cgIdParam}=${cgId}`;
     }
 }
