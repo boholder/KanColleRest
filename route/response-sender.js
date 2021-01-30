@@ -35,12 +35,8 @@ export class ResponseSender {
         }
     }
 
-    static send204NoContent(res, data = '') {
-        res.status(204).send(data);
-    }
-
     static send400WhenRequestParamValuesHaveIllegal(res, ...illegalParamPairs) {
-        let explanation = `Unsupported parameter value at: ${illegalParamPairs}`;
+        let explanation = `Unsupported parameter value at: ${JSON.stringify(illegalParamPairs)}`;
         this.send400BadRequest(res, explanation);
     }
 
@@ -48,11 +44,11 @@ export class ResponseSender {
         res.status(400).send(explanation);
     }
 
-    static send404NotFound(res) {
-        res.status(404).send(
-            'Sorry, we cannot find appropriate response!\n' +
-            '\t\t\\\n' +
-            '_____cat____prostrating-girl______');
+    static send404NotFound(res, data =
+    'Sorry, we cannot find appropriate response!\n' +
+    '\t\t\\\n' +
+    '_____cat____prostrating-girl______') {
+        res.status(404).send(data);
     }
 
     static send409Conflict(res, explanation) {

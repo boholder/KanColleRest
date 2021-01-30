@@ -25,13 +25,14 @@ afterEach(() => {
     res.resetMocked();
 });
 
-it('send hint json to GET request which doesn\'t have "ship" param', () => {
+it('send hint json to GET request ' +
+    'which doesn\'t have "ship" param', () => {
     let req = new Request(ShipInfoRouteUtil.route);
     ShipInfoController.getInfo(req, res);
     expect(res.json).toBeCalledTimes(1);
 })
 
-describe('send 400 when any of 3 request params contains invalid value', () => {
+describe('Controller send 400 when any of 3 request params contains invalid value', () => {
     test('request match format is id but match value is not a number', async () => {
         let req = new Request(
             ShipInfoRouteUtil.buildRequestRouteWith(
@@ -39,9 +40,16 @@ describe('send 400 when any of 3 request params contains invalid value', () => {
         ShipInfoController.getInfo(req, res);
         expect(res.statusCode).toBe(400);
     })
-    test('invalid id', async () => {
+    test('id is number but negative', async () => {
         let req = new Request(
             ShipInfoRouteUtil.buildRequestRouteWith(-1, 'id')
+        );
+        ShipInfoController.getInfo(req, res);
+        expect(res.statusCode).toBe(400);
+    })
+    test('id is number but too big', async () => {
+        let req = new Request(
+            ShipInfoRouteUtil.buildRequestRouteWith(9999999, 'id')
         );
         ShipInfoController.getInfo(req, res);
         expect(res.statusCode).toBe(400);
@@ -63,7 +71,9 @@ describe('send 400 when any of 3 request params contains invalid value', () => {
     })
 });
 
-describe('send normal response to correct requests, which will call service methods', () => {
+describe('Controller send normal response to correct requests, ' +
+    'which will call service methods', () => {
+
     test('request format id, response json format', async () => {
         let req = new Request(
             ShipInfoRouteUtil.buildRequestRouteWith(

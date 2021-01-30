@@ -1,5 +1,10 @@
 import {BaseDao, DB_FILE_NAME} from "../../../db/dao/base.dao.js";
-import {DatabaseInitializingError, DatabaseQueryExecuteError, DatabaseQueryFormatError} from "../../../util/error";
+import {
+    DatabaseInitializingError,
+    DatabaseQueryExecuteFailError,
+    DatabaseQueryExecuteNoResultError,
+    DatabaseQueryFormatError
+} from "../../../util/error";
 
 class WrongDao extends BaseDao {
     // fs.existsSync() will return true if space character in path.
@@ -59,14 +64,14 @@ describe('getOneById method should:', () => {
             .rejects.toThrowError(DatabaseQueryFormatError);
     });
 
-    it('rejects with DatabaseQueryExecuteError when matches nothing', async () => {
+    it('rejects with DatabaseQueryExecuteNoResultError when matches nothing', async () => {
         await expect(TestDao.getOneBy(1))
-            .rejects.toThrowError(DatabaseQueryExecuteError);
+            .rejects.toThrowError(DatabaseQueryExecuteNoResultError);
     })
 
-    it('rejects with DatabaseQueryExecuteError when nedb rejects query', async () => {
+    it('rejects with DatabaseQueryExecuteFailError when nedb rejects query', async () => {
         await expect(TestDao.getOneBy(2))
-            .rejects.toThrowError(DatabaseQueryExecuteError);
+            .rejects.toThrowError(DatabaseQueryExecuteFailError);
     })
 
     it('resolves with result when matches result', async () => {
@@ -81,14 +86,14 @@ describe('getManyByQuery method should handle abnormal query result', () => {
             .rejects.toThrowError(DatabaseQueryFormatError);
     });
 
-    it('rejects with DatabaseQueryExecuteError when matches nothing', async () => {
+    it('rejects with DatabaseQueryExecuteNoResultError when matches nothing', async () => {
         await expect(TestDao.getManyBy({id: 1}))
-            .rejects.toThrowError(DatabaseQueryExecuteError);
+            .rejects.toThrowError(DatabaseQueryExecuteNoResultError);
     })
 
-    it('rejects with DatabaseQueryExecuteError when nedb rejects query', async () => {
+    it('rejects with DatabaseQueryExecuteFailError when nedb rejects query', async () => {
         await expect(TestDao.getManyBy({id: 2}))
-            .rejects.toThrowError(DatabaseQueryExecuteError);
+            .rejects.toThrowError(DatabaseQueryExecuteFailError);
     })
 
     it('resolves with result when matches result', async () => {

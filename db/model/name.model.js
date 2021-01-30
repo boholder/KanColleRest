@@ -28,9 +28,10 @@ class NameModel {
         return new NameModel(name);
     }
 
-    static buildModelArrayFromArray(names = []) {
+    static buildModelArrayFromEntityArray(names = []) {
         let result = [];
-        for (let name of names) {
+        for (let entity of names) {
+            let name = entity.name;
             let model = NameModel.build(name);
             if (name.ja_romaji) {
                 // special logic only for ship name.

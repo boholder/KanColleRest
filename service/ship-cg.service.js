@@ -8,32 +8,30 @@ import {ShipCgRouteUtil} from "../util/route/ship-cg-route.util.js";
 export default class ShipCgService {
     static matchShipById(res, id, cgIdParam) {
         return ShipDao.getIdNameBy(id).then(
-            result => {
-                this.#matchThenSend(res, result, cgIdParam);
-            }, reason => {
-                this.#handleFailedMatch(res, reason, id);
-            }
+            result => this.#matchThenSend(res, result, cgIdParam),
+            reason => this.#handleFailedMatch(res, reason, id)
         )
     }
 
     static #matchThenSend(res, ship, cgIdParam) {
-        // "cgIdParam" are hard coded in ShipCgModel & ShipSeasonalCgModel.
-        // Just want to reduce one cg type param.
-        // Type abbreviation:
-        // 'n' for normal cg,
-        // 'e' for seasonal cg whole_body version,
-        // 'd' for seasonal cg whole_body_damaged version,
-        // 'a' for mian's screenshot on all cgs of one ship girl.
-        // Cg number:
-        // for normal cg, number is image file name,
-        // for seasonal cg, number is seasonal cg id (image directory)
-        // for all-in-one cg, there is no cg number,
-        // and we'll search image by ship's Chinese name.
-        // (because these files are named in Chinese)
         let cgTypeAbbreviation = cgIdParam.charAt(0);
         let cgNumber = cgIdParam.slice(1);
         let wctfImageDir = config.get('resource.image.wctf_image_dir');
         let imagePath = '';
+
+        // "cgIdParam" are hard coded in ShipCgModel & ShipSeasonalCgModel.
+        // Just want to reduce one cg type param.
+        // Type abbreviation:
+        //      'n' for normal cg,
+        //      'e' for seasonal cg whole_body version,
+        //      'd' for seasonal cg whole_body_damaged version,
+        //      'a' for mian's screenshot on all cgs of one ship girl.
+        // Cg number:
+        //      for normal cg, number is image file name,
+        //      for seasonal cg, number is seasonal cg id (image directory)
+        //      for all-in-one cg, there is no cg number,
+        //      and we'll search image by ship's Chinese name.
+        //      (because these files are named in Chinese)
         switch (cgTypeAbbreviation) {
             case 'n':
                 imagePath = `${wctfImageDir}/ships/${ship.id}/${cgNumber}.png`;
@@ -67,6 +65,7 @@ export default class ShipCgService {
     }
 
     static #handleFailedMatch(res, reason, id) {
+        // TODO change execute error to subclass
         let queryFailedInShipDbFlag =
             reason instanceof DatabaseQueryExecuteError
             && reason.db === DB_FILE_NAME.ship;

@@ -21,15 +21,21 @@ export default class ShipDao extends BaseDao {
     }
 
     static async getIdNameBy(id) {
-        return super.getOneById(id, {name: 1, id: 1}).then(
+        return super.getOneById(id, {name: 1, id: 1,_id:0}).then(
             value => SimplifiedFieldEntityModel.build(value),
             reason => Promise.reject(reason)
         );
     }
 
+    static async getRawJsonsBy(query) {
+        return super.getManyByQuery(query, {_id: 0}).catch(
+            reason => Promise.reject(reason)
+        );
+    }
+
     static async getNamesBy(query) {
-        return super.getManyByQuery(query, {name: 1}).then(
-            value => NameModel.buildModelArrayFromArray(value),
+        return super.getManyByQuery(query, {name: 1,_id:0}).then(
+            value => NameModel.buildModelArrayFromEntityArray(value),
             reason => Promise.reject(reason)
         );
     }

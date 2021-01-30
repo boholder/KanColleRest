@@ -22,12 +22,6 @@ router.get(ShipCgRouteUtil.route, async (req, res) => {
 });
 
 // TODO unfinished old api below
-// // not public, for v1/ship/cg,
-// // result's image URI can be access via here and get image file.
-// app.get('/v1/image/ship', (async (req, res) => {
-//     ImageShipRoute(req, res);
-// }))
-//
 // app.get('/v1/equip/info', (async (req, res) => {
 //     await EquipInfoRoute(req, res);
 // }))

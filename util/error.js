@@ -30,7 +30,7 @@ class BaseError extends Error {
     }
 }
 
-class DatabaseQueryExecuteError extends BaseError {
+export class DatabaseQueryExecuteError extends BaseError {
     constructor(databaseName, innerError = undefined) {
         super("Error occurred when executing query", innerError);
         this.name = 'DatabaseQueryExecuteError';
@@ -42,7 +42,33 @@ class DatabaseQueryExecuteError extends BaseError {
     }
 }
 
-class DatabaseQueryFormatError extends BaseError {
+export class DatabaseQueryExecuteNoResultError extends DatabaseQueryExecuteError {
+    constructor(databaseName, query, innerError = undefined) {
+        super(databaseName, innerError);
+        this.message = "query get nothing";
+        this.name = 'DatabaseQueryExecuteNoResultError';
+        this.query = query;
+    }
+
+    additionalToString() {
+        return `db name:${this.db}, query:${JSON.stringify(this.query)},`;
+    }
+}
+
+export class DatabaseQueryExecuteFailError extends DatabaseQueryExecuteError {
+    constructor(databaseName, query, innerError = undefined) {
+        super(databaseName, innerError);
+        this.message = "query rejected by nedb";
+        this.name = 'DatabaseQueryExecuteFailError';
+        this.query = query;
+    }
+
+    additionalToString() {
+        return `db name:${this.db}, query:${JSON.stringify(this.query)},`;
+    }
+}
+
+export class DatabaseQueryFormatError extends BaseError {
     constructor(query, innerError = undefined) {
         super("Invalid query option", innerError);
         this.name = 'DatabaseQueryFormatError';
@@ -54,7 +80,7 @@ class DatabaseQueryFormatError extends BaseError {
     }
 }
 
-class ModelBuildError extends BaseError {
+export class ModelBuildError extends BaseError {
     constructor(modelClassName, innerError = undefined) {
         super("Building process isn't goes normally", innerError);
         this.name = 'ModelBuildError';
@@ -66,7 +92,7 @@ class ModelBuildError extends BaseError {
     }
 }
 
-class DatabaseInitializingError extends BaseError {
+export class DatabaseInitializingError extends BaseError {
     constructor(wantedDatabasePath, innerError = undefined) {
         super("Error occurred when initializing database", innerError);
         this.name = "DatabaseInitializingError";
@@ -78,7 +104,7 @@ class DatabaseInitializingError extends BaseError {
     }
 }
 
-class ImageSendingError extends BaseError {
+export class ImageSendingError extends BaseError {
     constructor(imagePath, innerError = undefined) {
         super('Error occurred when sending a image response', innerError);
         this.name = 'ImageSendingError';
@@ -89,9 +115,3 @@ class ImageSendingError extends BaseError {
         return `image path:${this.imagePath},`
     }
 }
-
-export {
-    BaseError, DatabaseQueryExecuteError,
-    DatabaseQueryFormatError, ModelBuildError,
-    DatabaseInitializingError, ImageSendingError
-};

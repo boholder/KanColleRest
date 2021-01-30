@@ -43,13 +43,19 @@ export default class ShipInfoController {
         let matchFormatIsId = matchFormat === 'id';
 
         // Attention: url param is string format, but id require number format.
+        let id = parseInt(ship);
         let matchFormatIsIdButIdIsNotANumber =
-            matchFormatIsId && isNaN(parseInt(ship));
+            matchFormatIsId && isNaN(id);
 
-        let matchForMatIsIdButIdIsNotPositive =
-            matchFormatIsId && parseInt(ship) <= 0
+        let idIsNumberButNotPositive =
+            matchFormatIsId && id <= 0
 
-        if (!ship || matchFormatIsIdButIdIsNotANumber || matchForMatIsIdButIdIsNotPositive) {
+        let idIsNumberButTooBig = id ? id > 10000 : false;
+        //TODO check ship should not contains special character. (escape ship string)
+
+        if (!ship || matchFormatIsIdButIdIsNotANumber
+            || idIsNumberButNotPositive || idIsNumberButTooBig) {
+
             let pair = {};
             pair[ShipInfoRouteUtil.shipParam] = ship;
             illegalParamPairs.push(pair);

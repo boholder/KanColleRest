@@ -2,7 +2,12 @@ import config from "config";
 import fs from "fs";
 import Datastore from "nedb-promises";
 import {logger} from "../../config/winston-logger.js";
-import {DatabaseInitializingError, DatabaseQueryExecuteError, DatabaseQueryFormatError} from "../../util/error.js";
+import {
+    DatabaseInitializingError,
+    DatabaseQueryExecuteFailError,
+    DatabaseQueryExecuteNoResultError,
+    DatabaseQueryFormatError
+} from "../../util/error.js";
 
 const FILE_SUFFIX = '.nedb';
 const DB_FILE_NAME = config.get("resource.datasource.nedb_file_names");
@@ -23,18 +28,15 @@ class BaseDao {
     static initDatastoreWith(dbFileName) {
         // See if pasted db file exists or not
         let dbPath = this.buildDbPathWith(dbFileName);
-        try {
-            if (fs.existsSync(dbPath)) {
-                // Nedb won't throw error when creating Datastore instance,
-                // it just set db file path into instance for further use.
-                this.datastore = Datastore.create(
-                    this.buildDbCreationOptionWith(dbPath)
-                );
-            } else {
-                throw Error('file not exists');
-            }
-        } catch (error) {
-            let initError = new DatabaseInitializingError(dbPath, error);
+        if (fs.existsSync(dbPath)) {
+            // Nedb won't throw error when creating Datastore instance,
+            // it just set db file path into instance for further use.
+            this.datastore = Datastore.create(
+                this.buildDbCreationOptionWith(dbPath)
+            );
+        } else {
+            let initError =
+                new DatabaseInitializingError(dbPath, new Error('db file not exists'));
             logger.error(initError.toString());
             throw initError;
         }
@@ -64,49 +66,40 @@ class BaseDao {
      */
     static async findOne(id, projection) {
         return this.datastore.findOne({id: id}, projection).then(
-            result => this.checkResultThenReturn(result, this.checkIdQueryResult(result), id),
-            reason => this.rejectAndLog(reason));
+            result => {
+                let resultIsTrusthyFlag = !!result;
+                return this.checkResultThenReturn(result, resultIsTrusthyFlag, id);
+            },
+            reason => this.rejectAndLogErrorExecuteFailError(reason));
     }
 
-    static checkResultThenReturn(value, checkResult, query) {
-        // when matches nothing, value is null
-        if (checkResult) {
+    static checkResultThenReturn(value, condition, query) {
+        if (condition) {
             return value;
         } else {
-            return this.rejectAndLogWarnExecuteError(
+            return this.rejectAndLogWarnNoResultError(
                 new Error(`query matched nothing:${JSON.stringify(query)}`));
         }
     }
 
-    static checkIdQueryResult(result) {
-        return result ? true : false;
-    }
-
-    static rejectAndLog(reason) {
-        // something bad happened inside nedb
-        return this.rejectAndLogErrorExecuteError(
-            new Error(`query rejected by nedb:${reason}`));
-    }
-
     /*
-        log in warn level
-         */
-    static rejectAndLogWarnExecuteError(inner = undefined) {
-        let error = this.warpErrorWithExecuteError(inner);
+    Something bad happened inside nedb.
+    Reject with DatabaseQueryExecuteNoResultError,
+    then log it at warn level
+    */
+    static rejectAndLogWarnNoResultError(query) {
+        let error = new DatabaseQueryExecuteNoResultError(
+            this.getDbNameFrom(this.datastore), query);
         logger.warn(error.toString());
         return Promise.reject(error);
     }
 
-    static warpErrorWithExecuteError(inner) {
-        let error = new DatabaseQueryExecuteError(this.getDbNameFrom(this.datastore), inner);
-        return error;
-    }
-
     /*
-    log in error level
-     */
-    static rejectAndLogErrorExecuteError(inner = undefined) {
-        let error = this.warpErrorWithExecuteError(inner);
+    Reject with DatabaseQueryExecuteFailError,
+    then log it at error level
+    */
+    static rejectAndLogErrorExecuteFailError(inner = undefined) {
+        let error = new DatabaseQueryExecuteFailError(inner);
         logger.error(error.toString());
         return Promise.reject(error);
     }
@@ -142,14 +135,9 @@ class BaseDao {
 
     static async findMany(query, projection) {
         return this.datastore.find(query, projection).then(
-            result => this.checkResultThenReturn(result, this.checkNameQueryResult(result), query),
-            reason => this.rejectAndLog(reason)
+            result => this.checkResultThenReturn(result, result.length > 0, query),
+            reason => this.rejectAndLogErrorExecuteFailError(reason)
         );
-    }
-
-    static checkNameQueryResult(result) {
-        // when matches nothing, value is []
-        return result.length > 0;
     }
 }
 

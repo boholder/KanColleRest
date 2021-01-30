@@ -1,13 +1,13 @@
 "use strict";
 
 import config from 'config'
-import {expressWinstonLogger, logger} from "./config/winston-logger.js";
+import {expressWinstonLogger} from "./config/winston-logger.js";
 import helmet from "helmet";
 import rateLimit from "express-rate-limit";
 import {router} from "./route/route.js";
 import express from "express";
 
-const app = express();
+export const app = express();
 
 // TODO 如何让nedb在nodejs中持久，不重复创建（现有的static可行吗？）。
 //  并发请求性能测试(基准测试)，是否要在linux服务器中做测试？
@@ -43,6 +43,4 @@ app.use(expressWinstonLogger);
 
 // Load router
 app.use(router);
-
-export {app};
 

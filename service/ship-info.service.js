@@ -2,32 +2,35 @@ import config from "config";
 import {ResponseSender} from "../route/response-sender.js";
 import {ShipInfoRouteUtil} from "../util/route/ship-info-route.util.js";
 import ShipDao from "../db/dao/ship.dao.js";
-import {DatabaseQueryExecuteError, ModelBuildError} from "../util/error.js";
+import {DatabaseQueryExecuteFailError, DatabaseQueryExecuteNoResultError, ModelBuildError} from "../util/error.js";
 import {DB_FILE_NAME} from "../db/dao/base.dao.js";
 
 export default class ShipInfoService {
     static matchById(res, {ship: id, responseFormat}) {
-        // Hard code with match format param value: "id"
+        // Hard code with match format param value: "id", response format "json", "img"
         // This means shipParam is an id of one ship's one model.
+        if (responseFormat === 'json') {
+            return this.#getModelById(res, id, responseFormat);
+        } else if (responseFormat === 'img') {
+            return this.#onlyGetIdNameById(res, id, responseFormat);
+        }
+    }
+
+    static #getModelById(res, id, responseFormat) {
         return ShipDao.getModelBy(parseInt(id)).then(
-            result => {
-                // wrap result into array to maintain consistency with name query result.
-                this.#checkIdResultThenSend(res, [result], responseFormat);
-            }, reason => {
-                this.#handleFailedMatch(res, reason, id);
-            }
+            // wrap result into array to maintain consistency with name query result.
+            result => this.#sendResponse(res, [result], responseFormat),
+            reason => this.#handleFailMatch(res, reason, id)
         );
     }
 
-    static #checkIdResultThenSend(res, shipArray, responseFormat) {
-        // When db query by id matches nothing,
-        // id query will be null and shipArray will be [null]
-        let idQueryReturnsTrusthy = shipArray[0] && Object.entries(shipArray[0]).length > 0;
-        if (shipArray.length === 1 && idQueryReturnsTrusthy) {
-            this.#sendResponse(res, shipArray, responseFormat);
-        } else {
-            ResponseSender.send204NoContent(res);
-        }
+    static #onlyGetIdNameById(res, id, responseFormat) {
+        // ensure ship zh_cn name won't be appended suffix so we can concat image path
+        return ShipDao.getIdNameBy(parseInt(id)).then(
+            // wrap result into array to maintain consistency with name query result.
+            result => this.#sendResponse(res, [result], responseFormat),
+            reason => this.#handleFailMatch(res, reason, id)
+        );
     }
 
     static #sendResponse(res, shipArray, responseFormatParam) {
@@ -35,35 +38,48 @@ export default class ShipInfoService {
         if (responseFormatParam === 'json') {
             ResponseSender.sendJson(res, shipArray);
         } else if (responseFormatParam === 'img') {
-            this.#sendShipInfoImage(res, shipArray);
+            this.#sendImage(res, shipArray);
         }
     }
 
-    static #sendShipInfoImage(res, shipArray) {
+    static #sendImage(res, shipArray) {
         let oneShipModel = shipArray[0];
+        let imagePath = this.#buildImagePath(oneShipModel);
+        ResponseSender.sendPngOr404DontLogError(res, imagePath);
+    }
+
+    static #buildImagePath(oneShipModel) {
         let mianImageDir = config.get('resource.image.mian_image_dir');
-        let imagePath = '';
+        let imagePath = 'ship_model_is_not_have_zh_cn_name_so_cant_build_image_path';
         if (oneShipModel.name && oneShipModel.name.zh_cn) {
             imagePath =
                 `${mianImageDir}/ship/ship_info/${oneShipModel.name.zh_cn}1.png`;
         }
-        ResponseSender.sendPngOr404DontLogError(res, imagePath);
+        return imagePath;
     }
 
-    static #handleFailedMatch(res, reason, shipParam) {
+    static #handleFailMatch(res, reason, shipParam) {
         let queryFailedInShipDbFlag =
-            reason instanceof DatabaseQueryExecuteError
-            && reason.db === DB_FILE_NAME.ship;
+            reason instanceof DatabaseQueryExecuteFailError
+            && reason.db === DB_FILE_NAME.ship + '.nedb';
+
+        let matchesNothingInShipDbFlag =
+            reason instanceof DatabaseQueryExecuteNoResultError
+            && reason.db === DB_FILE_NAME.ship + '.nedb';
 
         if (queryFailedInShipDbFlag) {
             ResponseSender.send400BadRequest(res,
-                `Error occurred when querying ship database. ` +
-                `Maybe ship database is corrupted (please contact with server admin) ` +
-                `or match value (${ShipInfoRouteUtil.shipParam}) matched nothing:${shipParam}`);
+                `Ship database(processed by nedb) rejects query. ` +
+                `Maybe ship database is corrupted, please contact with server admin.`);
+        } else if (matchesNothingInShipDbFlag) {
+            ResponseSender.send404NotFound(res,
+                `Request matches nothing in ship database. ` +
+                `Maybe ship database is corrupted (lost this ship's relative records) ` +
+                `or match value (${ShipInfoRouteUtil.shipParam}) is invalid:${shipParam}`)
         } else if (reason instanceof ModelBuildError) {
             ResponseSender.send400BadRequest(res,
                 `Error occurred when building result form query result. ` +
-                `Maybe ship database is corrupted (please contact with server admin) ` +
+                `Maybe ship database is corrupted (some data in relative records are incorrect) ` +
                 `or match value (${ShipInfoRouteUtil.shipParam}) is invalid:${shipParam}`);
         } else {
             ResponseSender.send500InternalServerError(res);
@@ -72,15 +88,14 @@ export default class ShipInfoService {
 
     static matchByName(res, params) {
         // This means shipParam is a name format.
-        // Hard code with rest of format param values
+        // Hard code with rest of format param values except "id"
         let query = this.#buildNameQuery(params.ship, params.matchFormat);
-        return ShipDao.getModelsBy(query).then(
-            resultArray => {
-                this.#checkNameResultThenSend(res, resultArray, params);
-            }, reason => {
-                this.#handleFailedMatch(res, reason, params.ship);
-            }
-        );
+        let responseFormat = params.responseFormat;
+        if (responseFormat === 'json') {
+            return this.#getModelsByName(res, query, params);
+        } else if (responseFormat === 'img') {
+            return this.#getRawJsonsByName(res, query, params);
+        }
     }
 
     static #buildNameQuery(shipParam, matchFormatParam) {
@@ -100,12 +115,26 @@ export default class ShipInfoService {
         return query;
     }
 
-    static #checkNameResultThenSend(res, shipArray, params) {
-        if (shipArray.length > 0) {
-            this.#sendResponse(res, shipArray, params.responseFormat);
+    static #getModelsByName(res, query, params) {
+        return ShipDao.getModelsBy(query).then(
+            resultArray => this.#sendResponse(res, resultArray, params.responseFormat),
+            reason => this.#sendSuggestionOrHandleReject(res, reason, params)
+        );
+    }
+
+    static #getRawJsonsByName(res, query, params) {
+        // ensure ship zh_cn name won't be appended suffix so we can concat image path
+        return ShipDao.getRawJsonsBy(query).then(
+            resultArray => this.#sendResponse(res, resultArray, params.responseFormat),
+            reason => this.#sendSuggestionOrHandleReject(res, reason, params)
+        );
+    }
+
+    static #sendSuggestionOrHandleReject(res, reason, params) {
+        if (reason instanceof DatabaseQueryExecuteNoResultError) {
+            this.#tryToGetSimilarNamesThenSendSuggestion(res, params);
         } else {
-            // match format is name, try to send suggest instead of 204
-            this.#tryToGetSimilarNamesThenSendSuggest(res, params);
+            this.#handleFailMatch(res, reason, params.ship);
         }
     }
 
@@ -114,29 +143,27 @@ export default class ShipInfoService {
         return similar ship names as suggest based on shipParam & match format,
         instead of just return [204 No Content].
      */
-    static #tryToGetSimilarNamesThenSendSuggest(res, {ship, matchFormat}) {
-        let fuzzyShipName = `.*${ship}.*`;
-        let query = this.#buildNameQuery(fuzzyShipName, matchFormat);
-        ShipDao.getNamesBy(query).then(
-            nameModelArray => {
-                this.#checkSimilarNamesResultThenSend(res, nameModelArray, matchFormat);
-            }, reason => {
-                this.#handleFailedMatch(res, reason, ship);
-            }
+    static #tryToGetSimilarNamesThenSendSuggestion(res, {ship, matchFormat}) {
+        let query = this.#buildNameQuery(ship, matchFormat);
+        // replace query
+        let [key, value] = Object.entries(query)[0];
+        let fuzzyShipName = new RegExp(`.*${ship}.*`);
+        let fuzzyQuery = {};
+        fuzzyQuery[key] = {$regex: fuzzyShipName}
+        ShipDao.getNamesBy(fuzzyQuery).then(
+            nameModelArray => this.#sendSuggestion(res, nameModelArray, matchFormat),
+            reason => this.#handleFailMatch(res, reason, ship)
         )
     }
 
-    static #checkSimilarNamesResultThenSend(res, names, matchFormatParam) {
-        if (names.length !== 0) {
-            let similarNames = [];
-            for (let name of names) {
-                similarNames.push(name[matchFormatParam]);
-            }
-            ResponseSender.send204NoContent(res,
-                `Found no result under exact match. ` +
-                `Here are all similar valid ship names:${similarNames}`);
-        } else {
-            ResponseSender.send204NoContent(res);
+    static #sendSuggestion(res, names, matchFormatParam) {
+        let similarNames = new Set();
+        for (let name of names) {
+            similarNames.add(name[matchFormatParam])
         }
+        ResponseSender.send404NotFound(res,
+            `Found no result under exact match. ` +
+            `Here are all similar valid ship names:` +
+            `${JSON.stringify([...similarNames])}`);
     }
 }

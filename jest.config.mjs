@@ -4,6 +4,11 @@
  */
 
 export default {
+    // Ignore integration tests,
+    // they can't pass when jest running all tests
+    // because they need real database files while jest can't provide it.
+    modulePathIgnorePatterns: ["/test/integration-tests"],
+
     // All imported modules in your tests should be mocked automatically
     // automock: false,
 
