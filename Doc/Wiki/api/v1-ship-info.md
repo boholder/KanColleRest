@@ -24,7 +24,7 @@ For details, please refer to the corresponding section below.
 |matchfmt|No|`id`<br>`ja_kana`<br>`ja_jp`<br>`en_us` <br>`zh_cn`|`zh_cn`|match value's format|
 |resfmt|No|`json`<br>`img`|`json`|response format|
 
-* id match format is specially relative to the database, not the serial number of the memory book in the game.
+* `id` match format is specially relative to the database record id, not the id in the in-game memory album.
 
 ---
 
@@ -372,12 +372,6 @@ value of en_us is not empty, note that `ja_jp` name is in-game name of one entit
         * 对该舰娘所有CG的截图
         * *Screenshot about all CG of this ship*
 
-### 2.3. Image format 图片格式
-
-Oh... please forgive ugly colors.
-
-![](https://i.ibb.co/WvcLDD8/e1.png)
-
 ## 3.Example 例子
 
 Take Shiratsuyu Class Destroyer: **Murasame** as an example.
@@ -388,10 +382,10 @@ Take Shiratsuyu Class Destroyer: **Murasame** as an example.
 
 request url: **host/v1/ship/info? `match=村雨` & `matchfmt=zh_cn` & `resfmt=json`**
 
-[](https://github.com/boholder/KanColleREST/wiki/example-ship-info-response)
+[It's too long, I've put it to another page.](https://github.com/boholder/KanColleREST/wiki/example-ship-info-response)
 
 ### 3.2. Image format 图片格式
 
 request url: **host/v1/ship/info? `match=村雨` & `matchfmt=zh_cn` & `resfmt=img`**
 
-![](https://i.ibb.co/wQLdQ01/1.jpg)
+![example image](https://github.com/boholder/KanColleREST/tree/master/doc/wiki/api/example-ship-info-image.png)
