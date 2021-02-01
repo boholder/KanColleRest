@@ -3,7 +3,7 @@ import {NameModel} from "../../../db/model/name.model";
 
 test('build SimplifiedFieldEntityModel from falsy input will get default values', () => {
     let actual = SimplifiedFieldEntityModel.build();
-    expect(actual.id).toBeUndefined();
+    expect(actual.id).toBeNaN();
     expect(actual.name).toBeInstanceOf(NameModel);
 })
 
