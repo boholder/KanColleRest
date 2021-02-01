@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import config from "config";
 import {logger} from "./config/winston-logger.js";
 import {app} from "./app.js";
