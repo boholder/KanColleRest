@@ -3,6 +3,7 @@ node_modules
 package-lock.json
 data/image/mian_pics
 data/log
+
 # Visual studio project files
 .vs
 bin
@@ -22,6 +23,3 @@ doc/unfinished-documents/*
 
 # script for trying call modules on root directory
 try.js
-
-# mian's pictures zip file
-mian_pic.7z
