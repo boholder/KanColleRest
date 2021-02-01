@@ -10,6 +10,7 @@ import express from "express";
 export const app = express();
 
 // TODO 并发请求性能测试(基准测试)，是否要在linux服务器中做测试？
+// TODO 如果能把所有资源改成网络链接？
 
 // Forcing re-send response rather than send 304(Not Modified)(Browser presents cached content)
 //      when developing, for simulation debugging convenient.
