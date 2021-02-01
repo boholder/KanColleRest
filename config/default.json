@@ -12,7 +12,7 @@
   },
   "resource": {
     "datasource": {
-      "nedb_database_file_dir": "E:\\code\\javascript\\KanColleREST\\data\\WhoCallsTheFleet-DB\\db",
+      "nedb_database_file_dir": "./data/WhoCallsTheFleet-DB/db",
       "nedb_file_names": {
         "ship": "ships",
         "ship_name_suffix": "ship_namesuffix",
@@ -30,12 +30,12 @@
       }
     },
     "image": {
-      "wctf_image_dir": "E:\\code\\javascript\\KanColleREST\\data\\image\\WhoCallsTheFleet-Pics\\dist",
-      "mian_image_dir": "E:\\code\\javascript\\KanColleREST\\data\\image\\mian_pics"
+      "wctf_image_dir": "./data/image/WhoCallsTheFleet-Pics/dist",
+      "mian_image_dir": "./data/image/KanColleRest-Mian-Screenshots"
     }
   },
   "log": {
-    "log_directory": "E:\\code\\javascript\\KanColleREST\\data\\log"
+    "log_directory": "./data/log"
   },
   "api": {
     "current_version": "v1",

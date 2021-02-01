@@ -4,3 +4,6 @@
 [submodule "data/image/WhoCallsTheFleet-Pics"]
 	path = data/image/WhoCallsTheFleet-Pics
 	url = git@github.com:TeamFleet/WhoCallsTheFleet-Pics.git
+[submodule "data/image/KanColleRest-Mian-Screenshots"]
+	path = data/image/KanColleRest-Mian-Screenshots
+	url = https://github.com/boholder/KanColleRest-Mian-Screenshots.git
