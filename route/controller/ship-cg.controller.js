@@ -2,7 +2,7 @@ import {ShipCgRouteUtil} from "../../util/route/ship-cg-route.util.js";
 import {BaseRouteUtil} from "../../util/route/base-route.util.js";
 import {ResponseSender} from "../response-sender.js";
 import ShipCgService from "../../service/ship-cg.service.js";
-import {ShipInfoRouteUtil} from "../../util/route/ship-info-route.util";
+import {ShipInfoRouteUtil} from "../../util/route/ship-info-route.util.js";
 
 export default class ShipCgController {
     static getCg(req, res) {

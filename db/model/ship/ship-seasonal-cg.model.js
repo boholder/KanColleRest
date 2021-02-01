@@ -17,7 +17,7 @@ class ShipSeasonalCgModel {
         try {
             return await this.#buildModel(cg);
         } catch (e) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('ShipSeasonalCgModel', e).toString()
             );
             return new ShipSeasonalCgModel(cg);

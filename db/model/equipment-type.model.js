@@ -24,7 +24,7 @@ class EquipmentTypeModel {
         try {
             return new EquipmentTypeModel(equipmentType);
         } catch (error) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('EquipmentTypeModel', error).toString()
             );
         }

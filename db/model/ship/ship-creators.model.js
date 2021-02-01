@@ -1,21 +1,22 @@
 import {ModelBuildError} from "../../../util/error.js";
 import {logger} from "../../../config/winston-logger.js";
 import {CreatorDao} from "../../dao/creator.dao.js";
+import {SimplifiedFieldEntityModel} from "../simplified-field-entity.model.js";
 
 class CreatorsModel {
     constructor({cv, illustrator} = {}) {
-        this.cv = cv;
-        this.illustrator = illustrator;
+        this.cv = cv || new SimplifiedFieldEntityModel();
+        this.illustrator = illustrator || new SimplifiedFieldEntityModel();
     }
 
     static async build(creators = {}) {
         try {
             return await this.#buildModel(creators);
         } catch (e) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('CreatorsModel', e).toString()
             );
-            return new CreatorsModel(creators);
+            return new CreatorsModel();
         }
     }
 

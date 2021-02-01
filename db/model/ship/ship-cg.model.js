@@ -39,7 +39,7 @@ class ShipCgModel {
         try {
             return await this.#buildModel(ship);
         } catch (e) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('ShipCgModel', e).toString()
             );
             return new ShipCgModel(ship);

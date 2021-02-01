@@ -16,7 +16,7 @@ So we can declare a simplified entity,
  */
 class SimplifiedFieldEntityModel {
     constructor({id, name} = {}) {
-        this.id = id;
+        this.id = id || NaN;
         this.name = new NameModel(name);
     }
 
@@ -65,7 +65,7 @@ class FieldEntityArray {
                 entityArray.push(entity);
             }
         } catch (e) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('FieldEntityArray', e).toString()
             );
             return FieldEntityArray.buildModelFromEntityArray();

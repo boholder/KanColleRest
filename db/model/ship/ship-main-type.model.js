@@ -20,7 +20,7 @@ class ShipMainTypeModel {
         try {
             return new ShipMainTypeModel(type);
         } catch (e) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('ShipMainTypeModel', e).toString()
             );
             return new ShipMainTypeModel();

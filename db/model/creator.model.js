@@ -21,7 +21,7 @@ class CreatorModel {
         try {
             return await this.#buildModel(creator);
         } catch (error) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('CreatorModel', error).toString());
             return new CreatorModel(creator);
         }

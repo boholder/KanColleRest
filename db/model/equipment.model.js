@@ -13,7 +13,7 @@ class EquipmentModel {
         try {
             return new EquipmentModel(equip);
         } catch (error) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('EquipmentModel', error).toString());
             return new EquipmentModel(equip);
         }

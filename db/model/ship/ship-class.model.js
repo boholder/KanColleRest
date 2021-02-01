@@ -41,7 +41,7 @@ class ShipClassModel {
         try {
             return await this.#buildModel(shipClass);
         } catch (e) {
-            logger.error(
+            logger.warn(
                 new ModelBuildError('ShipClassModel', e).toString()
             );
             return new ShipClassModel(shipClass);

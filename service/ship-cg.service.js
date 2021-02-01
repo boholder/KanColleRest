@@ -3,7 +3,7 @@ import ShipDao from "../db/dao/ship.dao.js";
 import {ResponseSender} from "../route/response-sender.js";
 import {DatabaseQueryExecuteFailError, DatabaseQueryExecuteNoResultError} from "../util/error.js";
 import {DB_FILE_NAME} from "../db/dao/base.dao.js";
-import {ShipInfoRouteUtil} from "../util/route/ship-info-route.util";
+import {ShipInfoRouteUtil} from "../util/route/ship-info-route.util.js";
 
 export default class ShipCgService {
     static matchById(res, id, cgIdParam) {
