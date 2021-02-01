@@ -1,7 +1,7 @@
 {
   "name": "kcrest",
   "version": "0.0.3",
-  "description": "Kantai Collection game data sharing server using restful API on node.js",
+  "description": "Kantai Collection game information sharing server using restful API on node.js",
   "author": {
     "name": "boholder",
     "url": "https://boholder.github.io/en/"
@@ -10,6 +10,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
+    "run": "node server.js",
     "test": "jest ./test",
     "dbg": "nodemon server.js"
   },

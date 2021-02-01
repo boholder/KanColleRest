@@ -1,25 +1,38 @@
 # KanColleREST
 
-Restful api server mainly using node.js+mongodb+express.
-
-Provide data&info about a webpage game named "Kan Tai Collection".
+A restful api server mainly using node.js with express framework and
+using [nedb databse](https://github.com/louischatriot/nedb), to provide game information about a webpage game named "Kan
+Tai Collection".
 
 Game's official site:www.dmm.com/netgame/social/-/gadgets/=/app_id=854854/
 
-These data can be queried and used by IM chat bots that implements HTTP module,like CoolQ (https://github.com/CoolQ ,a Tencent QQ chat bot) with http plugin.
+For more information, check [Wiki](https://github.com/boholder/KanColleREST/wiki).
 
-Direct data source:
+## API
 
-Json data base: https://github.com/TeamFleet/WhoCallsTheFleet-DB  (MIT)
+All APIs only accept `GET` requests now.
 
-Picture:  https://github.com/TeamFleet/WhoCallsTheFleet  (MIT)
+### Ship
 
-Ships's data picture in simple chinese:  https://zh.moegirl.org/舰队Collection (taked by this column's related person called 眠)(CC BY-NC-SA 3.0)
+* [v1/ship/info](https://github.com/boholder/KanColleREST/wiki/api-ship-info)
+    * Ships information
 
-Equipments's data picture in simple chinese:  http://fleet.diablohu.com/  (taked by 眠)(MIT?)
+* [v1/ship/cg](https://github.com/boholder/KanColleREST/wiki/api-ship-cg)
+    * Ships CG (regular CG/ seasonal limited CG/ other images about ships)
 
-Learning by doing,this proj isn't completed now.
+## Related projects and websites
 
-I'll start from ship info,after that I'll provide more api for use.
+* [Who calls the fleet DB -@Diablohu](https://github.com/TeamFleet/WhoCallsTheFleet-DB)
+* [WhoCallsTheFleet-Pics -@Diablohu](https://github.com/TeamFleet/WhoCallsTheFleet-Pics)
+* [Moegirl Wiki KanColle Column 萌娘百科舰C版块](https://zh.moegirl.org/%E8%88%B0%E9%98%9FCollection#)
 
-For more info, see [Wiki](https://github.com/boholder/KanColleREST/wiki).
+## Acknowledgement
+
+* [@Diablohu](https://github.com/Diablohu) - Who provides an excellent database & image resource and shows me how to use
+  them.
+* [@Bluefissure](https://github.com/Bluefissure) - Whose project [FFXIVBOT](https://github.com/Bluefissure/FFXIVBOT)
+  inspired me.
+* @Mian - Who provides screenshots of Moegirl Wiki KanColle Column, so I can provide an image format ship information
+  response for convenient.
+* @Wei - My friend who noticed me that I can't just leave a mess on Github then pretend it doesn't exist, that goes
+  against professionalism.
