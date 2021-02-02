@@ -1,7 +1,5 @@
 # v1/ship/info
 
-## 0. Introduction 介绍
-
 Ship's information in json or image format. Don't be afraid of the length of this document, You can use API with just a
 few readings about parameters descriptions.
 
@@ -382,10 +380,10 @@ Take Shiratsuyu Class Destroyer: **Murasame** as an example.
 
 request url: **host/v1/ship/info? `match=村雨` & `matchfmt=zh_cn` & `resfmt=json`**
 
-[It's too long, I've put it to another page.](https://github.com/boholder/KanColleREST/wiki/example-ship-info-response)
+[It's too long, I've put it to another page.](https://github.com/boholder/KanColleREST/wiki/example-ship-info-json-response)
 
 ### 3.2. Image format 图片格式
 
 request url: **host/v1/ship/info? `match=村雨` & `matchfmt=zh_cn` & `resfmt=img`**
 
-![example image](https://github.com/boholder/KanColleREST/tree/master/doc/wiki/api/example-ship-info-image.png)
+![example image](https://github.com/boholder/KanColleRest/blob/master/doc/wiki/api/example-ship-info-image.png?raw=true)
