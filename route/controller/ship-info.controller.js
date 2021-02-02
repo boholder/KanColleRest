@@ -6,7 +6,11 @@ import ShipInfoRequestDto from "../../dto/ship-info-request.dto.js";
 
 export default class ShipInfoController {
     static getInfo(req, res) {
-        if (req.query[ShipInfoRouteUtil.shipParam]) {
+        let threeRequiredParamsExistAndTruthy =
+            req.query[ShipInfoRouteUtil.shipParam]
+            && req.query[ShipInfoRouteUtil.matchFormatParam]
+            && req.query[ShipInfoRouteUtil.responseFormatParam];
+        if (threeRequiredParamsExistAndTruthy) {
             this.#checkParamsThenMatch(req, res);
         } else {
             this.#sendHint(res);

@@ -14,17 +14,17 @@ All APIs only accept `GET` requests now.
 
 ### Ship
 
-* [v1/ship/info](https://github.com/boholder/KanColleREST/wiki/api-ship-info)
+* [v1/ship/info](https://github.com/boholder/KanColleREST/wiki/v1-ship-info)
     * Ships information
 
-* [v1/ship/cg](https://github.com/boholder/KanColleREST/wiki/api-ship-cg)
+* [v1/ship/cg](https://github.com/boholder/KanColleREST/wiki/v1-ship-cg)
     * Ships CG (regular CG/ seasonal limited CG/ other images about ships)
 
 ## Setting up the server
 
 > Attention here.
 > Cloning this project will cost 2.3G (all from submodules) traffic,
-> small bandwidth or billing traffic server should be reconsidered whether to clone this project 
+> small bandwidth or billing traffic server should be reconsidered whether to clone this project
 > or directly download it via a resuming download link.
 > (Apologize again for the size.)
 
@@ -54,10 +54,10 @@ npm start
 You may be interested in starting server as background service,
 check [this discuss on stackoverflow](https://stackoverflow.com/questions/4018154/how-do-i-run-a-node-js-app-as-a-background-service)
 for a proper solution. I have tried to imitate project [
-fhs-install-v2ray](https://github.com/v2fly/fhs-install-v2ray) to run the server via Linux systemd, and wrote the logic inside
-install script, but I have trouble writing scripts due to leak of bash knowledge.
+fhs-install-v2ray](https://github.com/v2fly/fhs-install-v2ray) to run the server via Linux systemd, and wrote the logic
+inside install script, but I have trouble writing scripts due to leak of bash knowledge.
 
-## Related projects and websites
+## Related (bing used by this project as resources) projects and websites
 
 * [Who calls the fleet DB -@Diablohu](https://github.com/TeamFleet/WhoCallsTheFleet-DB)
 * [WhoCallsTheFleet-Pics -@Diablohu](https://github.com/TeamFleet/WhoCallsTheFleet-Pics)

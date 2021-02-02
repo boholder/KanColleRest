@@ -7,3 +7,6 @@
 [submodule "data/image/KanColleRest-Mian-Screenshots"]
 	path = data/image/KanColleRest-Mian-Screenshots
 	url = https://github.com/boholder/KanColleRest-Mian-Screenshots.git
+[submodule "doc/KanColleRest.wiki"]
+	path = doc/KanColleRest.wiki
+	url = git@github.com:boholder/KanColleRest.wiki.git
