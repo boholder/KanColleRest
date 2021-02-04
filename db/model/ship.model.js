@@ -18,6 +18,8 @@ import {logger} from "../../config/winston-logger.js";
 import {CreatorsModel} from "./ship/ship-creators.model.js";
 import {ShipTypeModel} from "./ship/ship-type.model.js";
 import {ShipClassModel} from "./ship/ship-class.model.js";
+import {ShipRarityDao} from "../dao/ship-rarity.dao.js";
+import {ShipRarityModel} from "./ship/ship-rarity.model.js";
 
 /*
 It contains one ship girl's information of one model's information.
@@ -36,8 +38,7 @@ class ShipModel {
         this.remodel_series_id = ship.series || NaN;
         this.base_level = ship.base_lvl || NaN;
         this.buildtime = ship.buildtime || NaN;
-        // TODO rarity model
-        this.rare = ship.rare || NaN;
+        this.rare = ship.rare || ShipRarityModel.build();
         this.state = ShipStateModel.build(ship.stat);
         this.max_consumption = ship.consum || {fuel: NaN, ammo: NaN};
         this.equipment_slot = ship.slot || [];
@@ -97,9 +98,8 @@ class ShipModel {
 
     static async #assembleModelWithParts(ship) {
         ship.name = await ShipNameModel.build(ship.name);
-        // TODO query rare nedb when PR rare db file to WCTF-DB project
-        // ship.rare = await ShipRareModel.build(ship.rare);
         ship.type = await ShipTypeDao.getIdNameBy(ship.type);
+        ship.rare = await ShipRarityDao.getModelBy(ship.rare);
         ship.class = await ShipClassDao.getIdNameBy(ship.class);
         ship.equip = await this.#getInitEquipsInfoInArray(ship.equip);
         ship.additinal_item_types = await

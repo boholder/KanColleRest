@@ -26,7 +26,8 @@
         "main_equipment_type": "item_type_collections",
         "equipment_type": "item_types",
         "equipment": "items",
-        "ship_series": "ship_series"
+        "ship_series": "ship_series",
+        "ship_rare": "ship_rarities"
       }
     },
     "image": {
